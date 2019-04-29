@@ -38,16 +38,17 @@ def main(args):
 			args.list,
 			batch_size = 1,
 			crop_shape=args.imageShape,
-			num_epochs=1,
+			num_epochs=500000,
 			augment=False,
 			is_training=False,
 			shuffle=False
 		)
-		left_img_batch, right_img_batch, gt_image_batch = data_set.get_batch()
+		left_img_batch, right_img_batch, gt_image_batch, laser_img_batch = data_set.get_batch()
 		inputs={
 			'left':left_img_batch,
 			'right':right_img_batch,
-			'target':gt_image_batch
+			'target':gt_image_batch,
+			'laser': laser_img_batch
 		}
 
 	#build inference network
@@ -55,6 +56,7 @@ def main(args):
 		net_args = {}
 		net_args['left_img'] = left_img_batch
 		net_args['right_img'] = right_img_batch
+		net_args['laser_img'] = laser_img_batch
 		net_args['split_layers'] = [None]
 		net_args['sequence'] = True
 		net_args['train_portion'] = 'BEGIN'
@@ -90,6 +92,7 @@ def main(args):
 		
 		inputs_modules = {
 			'left':scale_tensor(left_img_batch,args.reprojectionScale),
+			'laser': scale_tensor(laser_img_batch, args.reprojectionScale),
 			'right':scale_tensor(right_img_batch,args.reprojectionScale),
 			'target':scale_tensor(gt_image_batch,args.reprojectionScale)/args.reprojectionScale
 		}
@@ -147,11 +150,17 @@ def main(args):
 		sess.run([tf.global_variables_initializer(),tf.local_variables_initializer()])
 
 		#restore disparity inference weights
+
 		var_to_restore = weights_utils.get_var_to_restore_list(args.weights, [])
 		assert(len(var_to_restore)>0)
 		restorer = tf.train.Saver(var_list=var_to_restore)
 		restorer.restore(sess,args.weights)
 		print('Disparity Net Restored?: {}, number of restored variables: {}'.format(True,len(var_to_restore)))
+		'''
+		restored, step_eval = weights_utils.check_for_weights_or_restore_them('./reslas', sess,
+																			  initial_weights=None)#args.weights
+		print('Disparity Net Restored?: {} from step {}'.format(restored, step_eval))'''
+
 
 		num_actions=len(train_ops)
 		if args.mode=='FULL':
@@ -292,18 +301,18 @@ def main(args):
 
 if __name__=='__main__':
 	parser=argparse.ArgumentParser(description='Script for online Adaptation of a Deep Stereo Network')
-	parser.add_argument("-l","--list", help='path to the list file with frames to be processed', required=True)
-	parser.add_argument("-o","--output", help="path to the output folder where the results will be saved", required=True)
-	parser.add_argument("--weights",help="path to the initial weights for the disparity estimation network",required=True)
-	parser.add_argument("--modelName", help="name of the stereo model to be used", default="Dispnet", choices=Nets.STEREO_FACTORY.keys())
-	parser.add_argument("--numBlocks", help="number of CNN portions to train at each iteration",type=int,default=1)
+	parser.add_argument("-l","--list", help='path to the list file with frames to be processed', default = 'csvFile2train_laser_2012.csv')
+	parser.add_argument("-o","--output", help="path to the output folder where the results will be saved", default='adaptlas/')
+	parser.add_argument("--weights",help="path to the initial weights for the disparity estimation network",default = 'reslas/weights.ckpt-350000')
+	parser.add_argument("--modelName", help="name of the stereo model to be used", default="MADNet", choices=Nets.STEREO_FACTORY.keys())
+	parser.add_argument("--numBlocks", help="number of CNN portions to train at each iteration",type=int,default=5)
 	parser.add_argument("--lr", help="value for learning rate",default=0.0001, type=float)
-	parser.add_argument("--blockConfig",help="path to the block_config json file",required=True)
-	parser.add_argument("--sampleMode",help="choose the sampling heuristic to use",choices=sampler_factory.AVAILABLE_SAMPLER,default='SAMPLE')
+	parser.add_argument("--blockConfig",help="path to the block_config json file",default = "block_config/MadNet_full.json")
+	parser.add_argument("--sampleMode",help="choose the sampling heuristic to use",choices=sampler_factory.AVAILABLE_SAMPLER,default='PROBABILITY')
 	parser.add_argument("--fixedID",help="index of the portions of network to train, used only if sampleMode=FIXED",type=int,nargs='+',default=[0])
 	parser.add_argument("--reprojectionScale",help="compute all loss function at 1/reprojectionScale",default=1,type=int)
-	parser.add_argument("--summary",help='flag to enable tensorboard summaries',action='store_true')
-	parser.add_argument("--imageShape", help='two int for image shape [height,width]', nargs='+', type=int, default=[320,1216])
+	parser.add_argument("--summary",help='flag to enable tensorboard summaries', action='store_true', default = True)
+	parser.add_argument("--imageShape", help='two int for image shape [height,width]', nargs='+', type=int, default=[320,960])
 	parser.add_argument("--SSIMTh",help="reset network to initial configuration if loss is above this value",type=float,default=0.5)
 	parser.add_argument("--sampleFrequency",help="sample new network portions to train every K frame",type=int,default=1)
 	parser.add_argument("--mode",help="online adaptation mode: NONE - perform only inference, FULL - full online backprop, MAD - backprop only on portions of the network", choices=['NONE','FULL','MAD'], default='MAD')

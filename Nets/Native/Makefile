@@ -17,12 +17,12 @@ CC := g++
 USE_GPU := 1
 
 # Read Tensorflow paths
-TF_INC := $(shell python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
-TF_LIB := $(shell python -c 'import tensorflow as tf; print(tf.sysconfig.get_lib())')
-TF_CFLAGS=$(shell python -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))') 
+TF_INC := $(shell python3 -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
+TF_LIB := $(shell python3 -c 'import tensorflow as tf; print(tf.sysconfig.get_lib())')
+TF_CFLAGS=$(shell python3 -c 'import tensorflow as tf; print(" ".join(tf.sysconfig.get_compile_flags()))')
 
 # Is the Tensorflow version >= 1.4?
-TF_VERSION_GTE_1_4 := $(shell expr `python -c 'import tensorflow as tf; print(tf.__version__)' | cut -f1,2 -d.` \>= 1.4)
+TF_VERSION_GTE_1_4 := $(shell expr `python3 -c 'import tensorflow as tf; print(tf.__version__)' | cut -f1,2 -d.` \>= 1.4)
 
 # Flags required for all cases
 CFLAGS := -std=c++11 -D_GLIBCXX_USE_CXX11_ABI=0 -shared -fPIC -I$(TF_INC) -O2 
@@ -49,7 +49,7 @@ shift_corr.so: shift_corr.cc shift_corr.cu.o
 	g++ $(CFLAGS) -o shift_corr.so shift_corr.cc shift_corr.cu.o $(LDFLAGS) -D  RUN_GPU=$(USE_GPU)
 
 shift_corr.cu.o: shift_corr.cu.cc
-	nvcc -std=c++11 -c -o shift_corr.cu.o shift_corr.cu.cc $(TF_CFLAGS) -x cu -Xcompiler -fPIC --expt-relaxed-constexpr -D GOOGLE_CUDA=1
+	nvcc -std=c++11 -c -o shift_corr.cu.o shift_corr.cu.cc $(TF_CFLAGS) -x cu -Xcompiler -fPIC --expt-relaxed-constexpr #-D GOOGLE_CUDA=1
 
 clean:
 	$(RM) shift_corr.so shift_corr.cu.o

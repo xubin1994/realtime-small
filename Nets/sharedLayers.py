@@ -42,10 +42,10 @@ def correlation_tf(x, y, max_disp, stride=1, name='corr'):
 	with tf.variable_scope(name):
 		corr_tensors = []
 		y_shape = tf.shape(y)
-		y_feature = tf.pad(y,[[0,0],[0,0],[max_disp,max_disp],[0,0]])
+		y_feature = tf.pad(y,[[0,0],[0,0],[max_disp,max_disp],[0,0]])#补全边界
 		for i in range(-max_disp, max_disp+1,stride):
-			shifted = tf.slice(y_feature, [0, 0, i + max_disp, 0], [-1, y_shape[1], y_shape[2], -1])
-			corr_tensors.append(tf.reduce_mean(shifted*x, axis=-1, keepdims=True))
+			shifted = tf.slice(y_feature, [0, 0, i + max_disp, 0], [-1, y_shape[1], y_shape[2], -1])#每一种偏移都尝试切下来
+			corr_tensors.append(tf.reduce_mean(shifted*x, axis=-1, keepdims=True))#3个颜色求均值？最后一位channel?
 
 		result = tf.concat(corr_tensors,axis=-1)
 		return result
@@ -56,7 +56,7 @@ def conv2d(x, kernel_shape, strides=1, activation=lambda x: tf.maximum(0.1 * x, 
         W = tf.get_variable(wName, kernel_shape, initializer=INITIALIZER_CONV)
         b = tf.get_variable(bName, kernel_shape[3], initializer=INITIALIZER_BIAS)
         x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding=padding)
-        x = tf.nn.bias_add(x, b)
+        x = tf.nn.bias_add(x, b)###要写
         if batch_norm:
             x = tf.layers.batch_normalization(x,training=training,momentum=0.99)
         x = activation(x)

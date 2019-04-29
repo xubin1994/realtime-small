@@ -57,14 +57,14 @@ class StereoNet(object):
         Args:
             name: name of the layer that need to be addded to the network collection
             op: tensorflow op 
-        """
+        """###placeholder进来的是之前固定参数的层的输出吧，然后输进需要训练的？？？反之一样？
         self._layers[name] = op
 
         # extract variables
         scope = '/'.join(op.name.split('/')[0:-1])
         variables = tf.get_collection(
             tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope) 
-        self._layer_to_var[name] = variables
+        self._layer_to_var[name] = variables##本层所有var
 
         if not self._after_split:
             # append layer name among those that can be turned into placeholder
@@ -132,7 +132,7 @@ class StereoNet(object):
         pass
 
     @abc.abstractmethod
-    def _validate_args(self, args):
+    def _validate_args(self, args):#####wuyong
         """
         Should validate the argument and add default values
         """
