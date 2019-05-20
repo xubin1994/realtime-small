@@ -194,6 +194,7 @@ class dataset():
         mask = tf.where(tf.equal(mask, False), tf.zeros_like(gt_image, dtype=tf.float32),
                                  tf.ones_like(gt_image, dtype=tf.float32))
         gt_image = fx * 0.54 / (gt_image + 1.0 - mask)  ##unvalid处取1
+        gt_image*=mask
         gt_image = gt_image[:,:tf.shape(left_image)[1],:]
 
         if (files.shape[0] > 3):

@@ -53,7 +53,7 @@ class MadNet(Stereo_net.StereoNet):
             args['bulkhead']=False
         return args
 
-    def _preprocess_inputs(self, args):
+    def _preprocess_inputs(self, args):##暂时不顶替掉传统视察的输入，回头再加：line的输出
         self._left_input_batch = args['left_img']
         self._restore_shape = tf.shape(args['left_img'])[1:3]
         self._left_input_batch = tf.cast(self._left_input_batch, tf.float32)
@@ -64,11 +64,21 @@ class MadNet(Stereo_net.StereoNet):
         self._right_input_batch = tf.cast(self._right_input_batch, tf.float32)
         self._right_input_batch = preprocessing.pad_image(
             self._right_input_batch, 64)
+        self._line_input_batch = args['line_img']
+        self._line_input_batch = tf.cast(self._line_input_batch, tf.float32)
+        self._conf_input_batch = args['conf_img']
+        self._conf_input_batch = tf.cast(self._conf_input_batch, tf.float32)
+
         if(args['laser_img'] != []):
             self._laser_input_batch = args['laser_img']
             self._laser_input_batch = tf.cast(self._laser_input_batch, tf.float32)
             self._laser_input_batch = preprocessing.pad_image(
                 self._laser_input_batch, 64)
+        if 'line_output' in args.keys():
+            self._line_output_batch = args['line_output']
+            self._line_output_batch = tf.cast(self._line_output_batch, tf.float32)
+            self._line_output_batch = preprocessing.pad_image(
+                self._line_output_batch, 64)
     
     def _make_disp(self,op,scale):
         op = tf.image.resize_images(tf.nn.relu(op * -20), [self._left_input_batch.get_shape()[1].value, self._left_input_batch.get_shape()[2].value]) 
@@ -124,7 +134,7 @@ class MadNet(Stereo_net.StereoNet):
 
             return self._get_layer_as_input(names[-1])
 
-    def _stereo_context_net(self, input, disp):
+    def _stereo_context_net(self, input, disp, last = False):
         volume = tf.concat([input, disp], -1)
         att = self._leaky_relu()
         names = []
@@ -167,13 +177,27 @@ class MadNet(Stereo_net.StereoNet):
         # context-7
         names.append('context7')
         input_layer = self._get_layer_as_input(names[-2])
-        self._add_to_layers(names[-1], sharedLayers.dilated_conv2d(
-            input_layer, [3, 3, 32, 1], name='context-7', rate=1, activation=lambda x: x))
+        if last:
+            self._add_to_layers(names[-1], sharedLayers.dilated_conv2d(
+                input_layer, [3, 3, 32, 2], name='context-7', rate=1, activation=lambda x: x))
+            out_2 = self._get_layer_as_input(names[-1])
+            part1=out_2[:, :, :, 0]
+            part1 = tf.expand_dims(part1,axis = -1) + disp
+            part2 = out_2[:, :, :, 1]
+            part2 =tf.expand_dims(part2,axis = -1)
+            out_2 = tf.concat([part1, part2], axis=3)
+            final_disp = out_2
+            self._add_to_layers('final_disp2', out_2)
+            return final_disp
 
-        final_disp = disp + self._get_layer_as_input(names[-1])
-        self._add_to_layers('final_disp', final_disp)
+        else:
+            self._add_to_layers(names[-1], sharedLayers.dilated_conv2d(
+                input_layer, [3, 3, 32, 1], name='context-7', rate=1, activation=lambda x: x))
+
+            final_disp = disp + self._get_layer_as_input(names[-1])
+            self._add_to_layers('final_disp', final_disp)
         
-        return final_disp
+            return final_disp
 
     def _pyramid_features(self, input_batch, scope='pyramid', reuse=False, layer_prefix='pyramid'):
         with tf.variable_scope(scope, reuse=reuse):
@@ -253,6 +277,7 @@ class MadNet(Stereo_net.StereoNet):
             self._add_to_layers(names[-1], sharedLayers.conv2d(input_layer, [
                                 3, 3, 192, 192], strides=1, name='conv12', bName='biases', activation=activation))
 
+    '''
     def _pyramid_features_laser(self, input_batch, scope='pyramid_laser', reuse=False, layer_prefix='pyramid_laser'):
         with tf.variable_scope(scope, reuse=reuse):
 
@@ -330,7 +355,7 @@ class MadNet(Stereo_net.StereoNet):
             input_layer = self._get_layer_as_input(names[-2])
             self._add_to_layers(names[-1], sharedLayers.conv2d(input_layer, [
                                 3, 3, 192, 192], strides=1, name='conv12', bName='biases', activation=activation))
-
+    '''
     def _build_network(self, args):
         image_height = self._left_input_batch.get_shape()[1].value
         image_width = self._left_input_batch.get_shape()[2].value
@@ -343,16 +368,155 @@ class MadNet(Stereo_net.StereoNet):
 
         # setup pyramid features right
         self._pyramid_features(self._right_input_batch, scope='gc-read-pyramid', reuse=True, layer_prefix='right')
-        self._pyramid_features_laser(self._laser_input_batch, scope='gc-read-pyramid-laser', layer_prefix='laser')
+
+
+        #self._pyramid_features_laser(self._laser_input_batch, scope='gc-read-pyramid-laser', layer_prefix='laser')
         #############################SCALE 6#################################
+        with tf.variable_scope('Nconvs'):
+            names = []
+            num_channels = 2
+            with tf.variable_scope('pre-nconv'):
+                # context-1
+                names.append('pre-nconv1')
+                a,b = [image_height // scales[2], image_width // scales[2]]
+                sz = [a,b]
+                input_layer = tf.image.resize_images(self._line_input_batch,sz)
+                input_conf = tf.image.resize_images(self._conf_input_batch,sz)
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    5, 5, input_layer.get_shape().as_list()[-1], 2*num_channels], name='pre-nconv-1'))
+                '''
+                names.append('pre-nconv2')
+                input_layer,input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    5, 5, input_layer.get_shape().as_list()[-1], num_channels], name='pre-nconv-2'))
+                '''
+
+                names.append('pre-nconv3')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    5, 5, input_layer.get_shape().as_list()[-1], num_channels], name='pre-nconv-3'))
+            with tf.variable_scope('down1'):
+                ds = [1,2,2,1]
+                names.append('down1-maxpool')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv_max_pool(input_layer, input_conf,ksize=ds, strides = ds, name='down1-maxpool'))
+
+                names.append('down1-nconv1')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    5, 5, input_layer.get_shape().as_list()[-1], num_channels], name='down1-nconv-1'))
+
+                names.append('down1-nconv2')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    5, 5, input_layer.get_shape().as_list()[-1], num_channels], name='down1-nconv-2'))##不变回两层
+            with tf.variable_scope('down2'):
+                ds = [1,2,2,1]
+                names.append('down2-maxpool')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv_max_pool(input_layer, input_conf,ksize=ds, strides = ds, name='down2-maxpool'))
+
+                names.append('down2-nconv1')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    5, 5, input_layer.get_shape().as_list()[-1], num_channels], name='down2-nconv-1'))
+
+            with tf.variable_scope('down3'):
+                ds = [1,2,2,1]
+                names.append('down3-maxpool')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv_max_pool(input_layer, input_conf,ksize=ds, strides = ds, name='down3-maxpool'))
+
+                names.append('down3-nconv1')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    5, 5, input_layer.get_shape().as_list()[-1], num_channels], name='down3-nconv-1'))
+
+            with tf.variable_scope('up1'):
+                names.append('up1-nconv1')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                targ_layer, targ_conf = self._get_layer_as_input('down2-nconv1')
+                input_layer=tf.image.resize_nearest_neighbor(
+                    input_layer,
+                    targ_layer.get_shape().as_list()[1:3],
+
+                )
+                input_conf = tf.image.resize_nearest_neighbor(
+                    input_conf,
+                    targ_conf.get_shape().as_list()[1:3],
+                )
+                input_conf=tf.concat([input_conf, targ_conf], axis=3)
+                input_layer = tf.concat([input_layer, targ_layer], axis=3)
+
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    3, 3, input_layer.get_shape().as_list()[-1], num_channels], name='up1-nconv-1'))
+
+            with tf.variable_scope('up2'):
+                names.append('up2-nconv1')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                targ_layer, targ_conf = self._get_layer_as_input('down1-nconv2')
+                input_layer = tf.image.resize_nearest_neighbor(
+                    input_layer,
+                    targ_layer.get_shape().as_list()[1:3],
+
+                )
+                input_conf = tf.image.resize_nearest_neighbor(
+                    input_conf,
+                    targ_conf.get_shape().as_list()[1:3],
+                )
+                input_conf = tf.concat([input_conf, targ_conf], axis=3)
+                input_layer = tf.concat([input_layer, targ_layer], axis=3)
+
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    3, 3, input_layer.get_shape().as_list()[-1], num_channels], name='up2-nconv-1'))
+
+            with tf.variable_scope('up3'):
+                names.append('up3-nconv1')
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                targ_layer, targ_conf = self._get_layer_as_input('pre-nconv3')
+                input_layer = tf.image.resize_nearest_neighbor(
+                    input_layer,
+                    targ_layer.get_shape().as_list()[1:3],
+
+                )
+                input_conf = tf.image.resize_nearest_neighbor(
+                    input_conf,
+                    targ_conf.get_shape().as_list()[1:3],
+                )
+                input_conf = tf.concat([input_conf, targ_conf], axis=3)
+                input_layer = tf.concat([input_layer, targ_layer], axis=3)
+
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    3, 3, input_layer.get_shape().as_list()[-1], num_channels], name='up3-nconv-1'))
+
+                names.append('final-nconv')##出来的算个loss
+                input_layer, input_conf = self._get_layer_as_input(names[-2])
+                '''
+                a,b = self._layers['final_disp3'].get_shape()[1].value,self._layers['final_disp3'].get_shape()[2].value
+                sz = [a,b]
+                input_layer = tf.image.resize_nearest_neighbor(input_layer,
+                                                             sz)
+                input_conf = tf.image.resize_nearest_neighbor(input_conf,sz)
+                '''
+                self._add_to_layers(names[-1], sharedLayers.nconv2d(input_layer, input_conf, [
+                    1, 1, input_layer.get_shape().as_list()[-1], 1], name='up3-nconv-2'))
+                n_layer, n_conf = self._get_layer_as_input(names[-1])
+                rescaled_prediction = tf.image.resize_images(n_layer,
+                                                             [image_height, image_width]) * -20.
+                self.my_disparities.append(rescaled_prediction)
+                self.output_laser_conf = tf.image.resize_images(n_conf,
+                                                            [image_height, image_width])##for loss
+
+                #self.fordisp_line = tf.image.resize_images(n_layer,[????])
+
         with tf.variable_scope("G6"):
             with tf.variable_scope("unary-6"):
                 left_0_sample_6 = self._get_layer_as_input('left/conv12')
                 right_0_sample_6 = self._get_layer_as_input('right/conv12')
-                laser = self._get_layer_as_input('laser/conv12')
-
+                #laser, conf = self._get_layer_as_input('final-nconv')#--------------------，也不知道应该加哪一层
+                #laser = tf.concat([laser, conf], axis=-1)
             with tf.variable_scope("fgc-volume-creator-6"):
-                dsi_6 = self._stereo_cost_volume_correlation_laser(left_0_sample_6, right_0_sample_6, args['radius_d'], laser, args['stride'])
+                dsi_6 = self._stereo_cost_volume_correlation(left_0_sample_6, right_0_sample_6, args['radius_d'], args['stride'])
 
             V6 = self._stereo_estimator(dsi_6, scope="fgc-volume-filtering-6")
             real_disp_v6 =self._make_disp(V6,scales[6])
@@ -365,6 +529,8 @@ class MadNet(Stereo_net.StereoNet):
         with tf.variable_scope("G5"):
             with tf.variable_scope("unary-5"):
                 left_0_sample_5 = self._get_layer_as_input('left/conv10')
+                #line_0_sample_5,conf = self._get_layer_as_input('down3-nconv1')
+                #line_0_sample_5 = tf.concat([line_0_sample_5,conf],axis = -1)
                 if args['warping']:
                     right_0_sample_5 = self._linear_warping(self._get_layer_as_input('right/conv10'), self._build_indeces(tf.concat([u5, tf.zeros_like(u5)], -1)))
                 else:
@@ -384,13 +550,15 @@ class MadNet(Stereo_net.StereoNet):
         with tf.variable_scope('G4'):
             with tf.variable_scope('unary-4'):
                 left_0_sample_4 = self._get_layer_as_input('left/conv8')
+                line_0_sample_4,conf = self._get_layer_as_input('up1-nconv1')
+                line_0_sample_4 = tf.concat([line_0_sample_4,conf],axis = -1)
                 if args['warping']:
                     right_0_sample_4 = self._linear_warping(self._get_layer_as_input('right/conv8'), self._build_indeces(tf.concat([u4, tf.zeros_like(u4)], -1)))
                 else:
                     right_0_sample_4 = self._get_layer_as_input('right/conv8')
 
             with tf.variable_scope("fgc-volume-creator-4"):
-                dsi_4 = self._stereo_cost_volume_correlation(left_0_sample_4, right_0_sample_4, args['radius_d'], args['stride'])
+                dsi_4 = self._stereo_cost_volume_correlation_laser(left_0_sample_4, right_0_sample_4, args['radius_d'],line_0_sample_4, args['stride'])
 
             V4 = self._stereo_estimator(dsi_4, upsampled_disp=u4, scope="fgc-volume-filtering-4")
             real_disp_v4 =self._make_disp(V4,scales[4])
@@ -403,13 +571,15 @@ class MadNet(Stereo_net.StereoNet):
         with tf.variable_scope('G3'):
             with tf.variable_scope('unary-3'):
                 left_0_sample_3 = self._get_layer_as_input('left/conv6')
+                line_0_sample_3, conf = self._get_layer_as_input('up2-nconv1')
+                line_0_sample_3 = tf.concat([line_0_sample_3, conf], axis=-1)
                 if args['warping']:
                     right_0_sample_3 = self._linear_warping(self._get_layer_as_input('right/conv6'), self._build_indeces(tf.concat([u3, tf.zeros_like(u3)], -1)))
                 else:
                     right_0_sample_3 = self._get_layer_as_input('right/conv6')
 
             with tf.variable_scope("fgc-volume-creator-3"):
-                dsi_3 = self._stereo_cost_volume_correlation(left_0_sample_3, right_0_sample_3, args['radius_d'], args['stride'])
+                dsi_3 = self._stereo_cost_volume_correlation_laser(left_0_sample_3, right_0_sample_3, args['radius_d'],line_0_sample_3, args['stride'])
 
             V3 = self._stereo_estimator(dsi_3, upsampled_disp=u3, scope="fgc-volume-filtering-3")
             real_disp_v3 =self._make_disp(V3,scales[3])
@@ -422,13 +592,15 @@ class MadNet(Stereo_net.StereoNet):
         with tf.variable_scope('G2'):
             with tf.variable_scope('unary-2'):
                 left_0_sample_2 = self._get_layer_as_input('left/conv4')
+                line_0_sample_2, conf = self._get_layer_as_input('final-nconv')
+                line_0_sample_2 = tf.concat([line_0_sample_2, conf], axis=-1)
                 if args['warping']:
                     right_0_sample_2 = self._linear_warping(self._get_layer_as_input('right/conv4'), self._build_indeces(tf.concat([u2, tf.zeros_like(u2)], -1)))
                 else:
                     right_0_sample_2 = self._get_layer_as_input('right/conv4')
 
             with tf.variable_scope("fgc-volume-creator-2"):
-                dsi_2 = self._stereo_cost_volume_correlation(left_0_sample_2, right_0_sample_2, args['radius_d'], args['stride'])
+                dsi_2 = self._stereo_cost_volume_correlation_laser(left_0_sample_2, right_0_sample_2, args['radius_d'],line_0_sample_2, args['stride'])
 
             self._stereo_estimator(dsi_2, upsampled_disp=u2, scope="fgc-volume-filtering-2")
             V2_init = self._get_layer_as_input('fgc-volume-filtering-2/disp6')
@@ -437,18 +609,86 @@ class MadNet(Stereo_net.StereoNet):
             #self._disparities.append(real_disp_v2)
 
         if args['context_net']:
-            V2 = self._stereo_context_net(left_0_sample_2, V2_init)
-            real_disp_v2_context = self._make_disp(V2,scales[2])
-            self._disparities.append(real_disp_v2_context)
-        else:
+            V2 = self._stereo_context_net(left_0_sample_2, V2_init, last = True)
+            real_disp3_v2_context = self._make_disp(V2,scales[2])#出来有padding64的
+            self._disparities.append(real_disp3_v2_context[:,:,:,0])
+            #先不加addtolayers了，加的一定需要调节权重，回头加
+        else: ##never
             V2 = V2_init
             self._add_to_layers('final_disp', V2)
             self._disparities.append(real_disp_v2)
 
-        rescaled_prediction = tf.image.resize_images(self._get_layer_as_input('final_disp'), [image_height, image_width]) * -20.
+        rescaled_prediction = tf.image.resize_images(tf.expand_dims(self._layers['final_disp2'][:, :, :, 0], axis = -1), [image_height, image_width]) * -20.#如果不加维数会出现奇怪的效果
         self._layers['rescaled_prediction'] = tf.image.resize_image_with_crop_or_pad(rescaled_prediction, self._restore_shape[0], self._restore_shape[1])
-        self._disparities.append(self._layers['rescaled_prediction'])
-    
+        self._disp_conf = tf.expand_dims(self._layers['final_disp2'][:, :, :, 1],axis = -1)
+        #self._disp_guide = tf.expand_dims(self._layers['final_disp3'][:, :, :, 2],axis = -1)
+
+        self._disparities.append(self._layers['rescaled_prediction'])###最后被fetch
+
+
+
+        # 最后几层省掉？？？
+        with tf.variable_scope('fusion'):
+            n_layer, n_conf = self._get_layer_as_input('final-nconv')
+
+            a,b = self._layers['final_disp2'].get_shape()[1].value,self._layers['final_disp2'].get_shape()[2].value
+            sz = [a,b]
+            n_layer = tf.image.resize_images(n_layer,
+                                                         sz)
+            n_conf = tf.image.resize_images(n_conf,sz)
+
+            conf = tf.stack([n_conf, self._disp_conf], axis=0)
+            disp = tf.stack([n_layer, tf.expand_dims(self._layers['final_disp2'][:, :, :, 0],axis = -1)], axis=0)
+            conf = tf.nn.softmax(
+                conf,
+                axis=0
+            )
+            _disp = tf.multiply(disp,conf)
+            weighted_disp = _disp[0,:,:,:,:]+_disp[1,:,:,:,:]
+
+            volume=tf.concat([n_layer,n_conf, weighted_disp, tf.expand_dims(self._layers['final_disp2'][:, :, :, 0],axis = -1), self._disp_conf],axis=-1)
+
+            activation = self._leaky_relu()
+
+            scope = 'fusion'
+            # disp-1
+            names.append('{}/fu1'.format(scope))
+            input_layer = volume
+            self._add_to_layers(names[-1], sharedLayers.conv2d(input_layer, [3, 3, input_layer.get_shape().as_list()[3], 16], strides=2,name='fu-1', bName='biases', activation=activation))
+            # fu-2:
+            '''self._left_input_batch = preprocessing.pad_image(
+            self._left_input_batch, 4) if 不是整数倍'''
+            names.append('{}/fu2'.format(scope))
+            input_layer = self._get_layer_as_input(names[-2])
+            self._add_to_layers(names[-1], sharedLayers.conv2d(input_layer, [
+                3, 3, 16, 8],strides=1, name='fu-2', bName='biases', activation=activation))
+
+            '''
+            # fu-3
+            names.append('{}/fu3'.format(scope))
+            input_layer = self._get_layer_as_input(names[-2])
+            #input_layer = tf.concat([input_layer, self._get_layer_as_input('{}/fu1'.format(scope))], axis=3)
+            self._add_to_layers(names[-1], sharedLayers.conv2d(input_layer, [
+                3, 3, 8, 4], name='fu-3', bName='biases', activation=activation))
+            
+            # fu-4:
+            names.append('{}/fu4'.format(scope))
+            input_layer = self._get_layer_as_input(names[-2])
+            self._add_to_layers(names[-1], sharedLayers.conv2d_transpose(input_layer, [
+                3, 3, 4, 8],strides=2, name='fu-4', bName='biases', activation=activation))'''
+
+            # fu-5
+            names.append('{}/fu5'.format(scope))
+            input_layer = self._get_layer_as_input(names[-2])
+            #大小不和四input_layer = tf.concat([input_layer, volume], axis=3)
+            print(input_layer.shape)#(2, 20, 60, 8)  注意反向conv参数要换位置？？？以及这里死活加不上layer，只能transpose
+            self._add_to_layers(names[-1], sharedLayers.conv2d_transpose(input_layer, [
+                3, 3, 1, input_layer.get_shape().as_list()[3]],strides=2, name='fu-5', bName='biases', activation=lambda x: x))###!!!![height, width, output_channels, in_channels]
+            # 换成了加法。
+            rescaled_prediction = tf.image.resize_images(self._get_layer_as_input(names[-1])+tf.expand_dims(self._layers['final_disp2'][:, :, :, 0],axis = -1),
+                                                        [image_height, image_width]) * -20.
+            self.my_disparities.append(rescaled_prediction)
+
     def _leaky_relu(self):
         return lambda x: tf.maximum(0.2 * x, x)
 
@@ -460,7 +700,8 @@ class MadNet(Stereo_net.StereoNet):
 
         return cost_curve
     def _stereo_cost_volume_correlation_laser(self,reference, target, radius_x, laser,stride=1 ):
-
+        laser = tf.image.resize_images(laser,
+                               [reference.get_shape().as_list()[1], reference.get_shape().as_list()[2]])
         cost_curve = sharedLayers.correlation(reference,target,radius_x,stride=stride)
         cost_curve = tf.concat([reference, cost_curve, laser], axis=3)#channel上
 
