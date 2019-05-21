@@ -1,7 +1,7 @@
 import tensorflow as tf
 import abc
 from collections import OrderedDict
-
+import collections
 
 class StereoNet(object):
     __metaclass__ = abc.ABCMeta
@@ -26,6 +26,7 @@ class StereoNet(object):
     def __init__(self, **kwargs):
         self._layers = OrderedDict()
         self._disparities = []
+        self.my_disparities = []
         self._placeholders = []
         self._placeholderable = []
         self._trainable_variables = OrderedDict() #Porcata per avere un ordered set...
@@ -58,25 +59,44 @@ class StereoNet(object):
             name: name of the layer that need to be addded to the network collection
             op: tensorflow op 
         """###placeholder进来的是之前固定参数的层的输出吧，然后输进需要训练的？？？反之一样？
-        self._layers[name] = op
-
+        self._layers[name] = op##可以存原始的俩
+        #print(op)
         # extract variables
-        scope = '/'.join(op.name.split('/')[0:-1])
-        variables = tf.get_collection(
-            tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope) 
-        self._layer_to_var[name] = variables##本层所有var
+        if isinstance(op, tuple):
+            for o in op:
+                scope = '/'.join(o.name.split('/')[0:-1])
+                variables = tf.get_collection(
+                    tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope)
+                self._layer_to_var[name] = variables##本层所有var
 
-        if not self._after_split:
-            # append layer name among those that can be turned into placeholder
-            self._placeholderable.append(name)
-        if self._after_split != self._train_beginning:  # XOR
-            # add variables in scope to the one that needs to be trained
-            for v in variables:
-                self._trainable_variables[v] = True
+                if not self._after_split:
+                    # append layer name among those that can be turned into placeholder
+                    self._placeholderable.append(name)
+                if self._after_split != self._train_beginning:  # XOR
+                    # add variables in scope to the one that needs to be trained
+                    for v in variables:
+                        self._trainable_variables[v] = True
 
-        if name in self._split_layers_list:
-            # enable flag to mark the first layer after split
-            self._after_split = True
+                if name in self._split_layers_list:
+                    # enable flag to mark the first layer after split
+                    self._after_split = True
+        else:
+                scope = '/'.join(op.name.split('/')[0:-1])
+                variables = tf.get_collection(
+                    tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope)
+                self._layer_to_var[name] = variables  ##本层所有var
+
+                if not self._after_split:
+                    # append layer name among those that can be turned into placeholder
+                    self._placeholderable.append(name)
+                if self._after_split != self._train_beginning:  # XOR
+                    # add variables in scope to the one that needs to be trained
+                    for v in variables:
+                        self._trainable_variables[v] = True
+
+                if name in self._split_layers_list:
+                    # enable flag to mark the first layer after split
+                    self._after_split = True
 
     def _get_layer_as_input(self, name):
         # Check if a placeholder for this layer already exist
@@ -102,6 +122,9 @@ class StereoNet(object):
         for k, l in self._layers.items():
             if l in self._disparities:
                 ss += "Prediction Layer {}: {}\n".format(k, str(l.shape))
+            elif isinstance(l, tuple):
+                for o in l:
+                    ss += "Layer {}: {}\n".format(k, str(o.shape))
             else:
                 ss += "Layer {}: {}\n".format(k, str(l.shape))
         return ss
@@ -203,6 +226,18 @@ class StereoNet(object):
         Return all the disparity predicted with increasing resolution
         """
         return self._disparities
+
+    def get_my_disparities(self):
+        """
+        Return all the disparity predicted with increasing resolution
+        """
+        return self.my_disparities
+    def get_laser_conf(self):
+        """
+        Return all the disparity predicted with increasing resolution
+        """
+        return self.output_laser_conf
+
 
     def get_trainable_variables(self):
         """

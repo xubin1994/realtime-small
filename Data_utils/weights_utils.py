@@ -34,7 +34,7 @@ def get_var_to_restore_list(ckpt_path, mask=[], prefix="", ignore_list=[]):
             t_key=t_key.replace(ig,'')
         if prefix+t_key in variables_dict.keys():
             var_to_restore[key] = variables_dict[prefix+t_key]
-    
+
     return var_to_restore
 
 
@@ -56,7 +56,7 @@ def check_for_weights_or_restore_them(logdir, session, initial_weights=None, pre
         restorer = tf.train.Saver(var_list=var_to_restore)
         restorer.restore(session,ckpt)
         step = int(ckpt.split('-')[-1])
-        return True,step
+        return True,step,[]
     elif initial_weights is not None:
         if os.path.isdir(initial_weights):
             #if its a directory fetch the last checkpoint
@@ -64,12 +64,12 @@ def check_for_weights_or_restore_them(logdir, session, initial_weights=None, pre
         step = 0
         var_to_restore = get_var_to_restore_list(initial_weights, [], prefix=prefix, ignore_list=ignore_list)
         print('Found {} variables to restore in {}'.format(len(var_to_restore),initial_weights))
-        if len(var_to_restore)>0:
+        '''if len(var_to_restore)>0:
             restorer = tf.train.Saver(var_list=var_to_restore)
-            restorer.restore(session, initial_weights)
-            return True,0
-        else:
-            return False,0
+            restorer.restore(session, initial_weights)'''
+        return True,0,var_to_restore #int(initial_weights.split('-')[-1]) huge
+        #else:
+        #return False,0,[]
     else:
         print('Unable to restore any weight')
         return False,0

@@ -5,7 +5,7 @@
       <paths name="Copy of project-level server 'nj-a-internal.brainpp.cn'">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/jiangying/realtimelaser" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/jiangying/realtimelinefirst" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

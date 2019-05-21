@@ -35,6 +35,8 @@ def mean_l1(x,y,mask=None):
 	"""
 	if mask is None:
 		mask=tf.ones_like(x, dtype=tf.float32)
+	y = tf.reshape(y, x.get_shape().as_list())
+	mask= tf.reshape(mask, x.get_shape().as_list())
 	return tf.reduce_sum(mask*tf.abs(x-y))/tf.reduce_sum(mask)
 
 def mean_l2(x,y,mask=None):
@@ -273,10 +275,13 @@ def get_supervised_loss(name, multiScale=False, logs=False, weights=None, reduce
 		weights = [1]*10
 	if max_disp is None:
 		max_disp=1000
-	def compute_loss(disparities,inputs):
+	def compute_loss(disparities,inputs,conf_for_laser):
 		left = inputs['left']
 		right = inputs['right']
 		targets = inputs['target']
+		if conf_for_laser is not None:
+			conf = tf.where(tf.greater(conf_for_laser, 0),conf_for_laser,tf.zeros_like(conf_for_laser, dtype=tf.float32))
+			conf = tf.where(tf.greater(conf, 1), tf.ones_like(conf, dtype=tf.float32), conf)
 		accumulator=[]
 		if multiScale:
 			disp_to_test=len(disparities)
@@ -288,9 +293,13 @@ def get_supervised_loss(name, multiScale=False, logs=False, weights=None, reduce
 			#upsample prediction
 			current_disp = disparities[-(i+1)]
 			disparity_scale_factor = tf.cast(tf.shape(left)[2],tf.float32)/tf.cast(tf.shape(current_disp)[2],tf.float32)
-			resized_disp = preprocessing.resize_to_prediction(current_disp,targets) * disparity_scale_factor
+			#resized_disp = preprocessing.resize_to_prediction(current_disp,targets) * disparity_scale_factor
+			resized_targets = preprocessing.resize_to_prediction(targets, current_disp) / disparity_scale_factor
 
-			partial_loss = base_loss_function(resized_disp,targets,valid_map)
+			if conf_for_laser is not None and (i == disp_to_test-2 or disp_to_test==1):
+				valid_map = valid_map*conf
+
+			partial_loss = base_loss_function(current_disp,resized_targets,valid_map)
 			#partial_loss = tf.Print(partial_loss,[disparity_scale_factor,tf.shape(valid_map),tf.reduce_sum(valid_map), tf.reduce_sum(valid_map*resized_disp)/tf.reduce_sum(valid_map), tf.reduce_sum(valid_map*targets)/tf.reduce_sum(valid_map)],summarize=10000)
 			if logs:
 				tf.summary.scalar('Loss_resolution_{}'.format(i),partial_loss)
@@ -342,7 +351,7 @@ def get_laser_loss(name, multiScale=False, logs=False, weights=None, reduced=Tru
 																					  tf.float32)
 			resized_disp = preprocessing.resize_to_prediction(current_disp, targets) * disparity_scale_factor
 
-			partial_loss = base_loss_function(resized_disp, targets, valid_map)
+			partial_loss = base_loss_function(tf.reshape(resized_disp, [None, None, None,1]), targets, valid_map)
 			# partial_loss = tf.Print(partial_loss,[disparity_scale_factor,tf.shape(valid_map),tf.reduce_sum(valid_map), tf.reduce_sum(valid_map*resized_disp)/tf.reduce_sum(valid_map), tf.reduce_sum(valid_map*targets)/tf.reduce_sum(valid_map)],summarize=10000)
 			if logs:
 				tf.summary.scalar('Loss_resolution_{}'.format(i), partial_loss)
@@ -353,7 +362,7 @@ def get_laser_loss(name, multiScale=False, logs=False, weights=None, reduced=Tru
 			return accumulator
 
 	return compute_loss
-def get_reprojection_loss(reconstruction_loss,multiScale=True, logs=False, weights=None,reduced=True):
+def get_reprojection_loss(reconstruction_loss,multiScale=True, logs=False, weights=None,reduced=True):###haimeigai
 	"""
 	Build a lmbda op to be used to compute a loss function using reprojection between left and right frame
 	Args:

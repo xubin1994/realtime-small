@@ -227,7 +227,7 @@ def main(args):
         print('Disparity Net Restored?: {} from step {}'.format(restored, step_eval))
         step_eval = 0
         #正好如果继续训练很安全，全部都可以训了
-        first_train_vars =[ v for v in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES) if v.name[:-2] not in vars_to_restore and 'nograd' not in v.name]
+        first_train_vars =[ v for v in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES) if v.name[:-2] not in vars_to_restore]
         #train_op = disparity_trainer.minimize(full_reconstruction_loss, global_step=global_step,
                                               #var_list=first_train_vars)
         #clipping
@@ -287,11 +287,11 @@ if __name__ == '__main__':
 	parser.add_argument("--validationSet", help="path to the list file with the validation set",
 						default='csvFile2test_flying.csv', type=str)#
 	parser.add_argument("-o", "--output", help="path to the output folder where the results will be saved",
-						default='rescspn/', type=str)
+						default='resline2/', type=str)
 	parser.add_argument("--weights", help="path to the initial weights for the disparity estimation network (OPTIONAL)", default = '../realtimelaser/reslas/')
-	parser.add_argument("--modelName", help="name of the stereo model to be used", default="MADNet",
+	parser.add_argument("--modelName", help="name of the stereo model to be used", default="MADNet_old",
 						choices=Nets.STEREO_FACTORY.keys())
-	parser.add_argument("--lr", help="initial value for learning rate", default=0.0001, type=float)#0.01
+	parser.add_argument("--lr", help="initial value for learning rate", default=0.0000001, type=float)#0.001
 	parser.add_argument("--imageShape", help='two int for image shape [height,width]', nargs='+', type=int,
 						default=[320, 960])#752x480
 	parser.add_argument("--batchSize", help='batch size to use during training', type=int, default=2)

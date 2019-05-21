@@ -3,6 +3,7 @@ import os
 
 INITIALIZER_CONV = tf.contrib.layers.xavier_initializer()
 INITIALIZER_BIAS = tf.constant_initializer(0.0)
+INITIALIZER_BIAS_NCONV = tf.constant_initializer(0.01)
 MODE = 'TF'
 
 ####################################################
@@ -51,16 +52,50 @@ def correlation_tf(x, y, max_disp, stride=1, name='corr'):
 		return result
 
 
-def conv2d(x, kernel_shape, strides=1, activation=lambda x: tf.maximum(0.1 * x, x), padding='SAME', name='conv', reuse=False, wName='weights', bName='bias', batch_norm=False, training=False):
+def conv2d(x, kernel_shape, strides=1, activation=lambda x: tf.maximum(0.1 * x, x), padding='SAME', name='conv', reuse=False, wName='weights', bName='bias', batch_norm=True, training=False, bias = True):
     with tf.variable_scope(name, reuse=reuse):
         W = tf.get_variable(wName, kernel_shape, initializer=INITIALIZER_CONV)
-        b = tf.get_variable(bName, kernel_shape[3], initializer=INITIALIZER_BIAS)
         x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding=padding)
-        x = tf.nn.bias_add(x, b)###要写
+        if bias == True:
+            b = tf.get_variable(bName, kernel_shape[3], initializer=INITIALIZER_BIAS)
+
+            x = tf.nn.bias_add(x, b)###要写
         if batch_norm:
             x = tf.layers.batch_normalization(x,training=training,momentum=0.99)
         x = activation(x)
         return x
+
+def nconv2d(x,c, kernel_shape, strides=1,dilations=[1,1,1,1], activation=lambda x: tf.maximum(0.1 * x, x), padding='SAME', name='nconv', reuse=False, wName='weights', bName='bias', batch_norm=False, training=False):##same!!
+    with tf.variable_scope(name, reuse=reuse):#kernel:3*3*输入通道数×输出通道数  no dilations
+        eps = 1e-20
+        padding = 'SAME'
+        W = tf.get_variable(wName, kernel_shape, initializer=INITIALIZER_CONV)
+        b = tf.get_variable(bName, kernel_shape[3], initializer=INITIALIZER_BIAS_NCONV)
+        W = 0.1 * tf.log(tf.exp(10 * W) + 1.0)
+        denom = tf.nn.conv2d(c, W, strides=[1, strides, strides, 1], padding=padding)
+        nomin = tf.nn.conv2d(x*c, W, strides=[1, strides, strides, 1], padding=padding)
+        nconv = nomin / (denom + eps)
+
+        nconv = tf.nn.bias_add(nconv, b)###要写
+        cout = denom
+
+        sz = cout.shape
+        cout = tf.reshape(cout,[sz[0], -1, sz[-1]])#Output: :math:`(N, C_{out}, H_{out}, W_{out})`torch, here  tf[b, i, j, k(channelout)]
+
+        k = W
+        k_sz = k.shape#(out_channels, in_channels, kernel_size[0], kernel_size[1]) for torch weight
+        k = tf.reshape(k,[-1,k_sz[-1]])#here  filter[di, dj, q, k],weight就是kernel
+
+        s = tf.reduce_sum(k, axis=0, keepdims=True)
+
+        cout = cout / (s + eps)
+        cout = tf.reshape(cout,sz)  ###归一化？？
+
+        if batch_norm:
+            nconv = tf.layers.batch_normalization(nconv,training=training,momentum=0.99)
+            cout = tf.layers.batch_normalization(cout,training=training,momentum=0.99)
+
+        return nconv, cout
 
 
 def dilated_conv2d(x, kernel_shape, rate=1, activation=lambda x: tf.maximum(0.1 * x, x), padding='SAME', name='dilated_conv', reuse=False, wName='weights', bName='biases',  batch_norm=False, training=False):
@@ -137,3 +172,12 @@ def channel_shuffle_inside_group(x, num_groups, name='shuffle'):
         x_transposed = tf.transpose(x_reshaped, [0, 1, 2, 4, 3])
         output = tf.reshape(x_transposed, [-1, h, w, c])
     return output
+
+def nconv_max_pool(inputx, inputc, ksize, strides,padding="SAME", name='nconv-maxpool'):
+    with tf.variable_scope(name):
+        outputc, arg_max = tf.nn.max_pool_with_argmax(input=inputc,ksize=ksize,strides=strides,padding=padding)
+        shape=tf.shape(outputc)
+        outputx=tf.reshape(tf.gather(tf.reshape(inputx,[-1]),arg_max),shape)
+
+        #err=tf.reduce_sum(tf.square(tf.subtract(output,output1)))
+    return outputx, outputc/4.0
