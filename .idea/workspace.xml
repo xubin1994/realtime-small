@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3dca72a0-a46a-4018-b536-e649ac1ea95a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Train_myt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/data_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/data_reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/preprocessing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Losses/loss_factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/Losses/loss_factory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train.py" afterDir="false" />
-    </list>
+    <list default="true" id="3dca72a0-a46a-4018-b536-e649ac1ea95a" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,7 +32,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Train.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="2547">
@@ -54,8 +47,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Train_myt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-239">
-              <caret line="241" column="110" selection-start-line="241" selection-start-column="12" selection-end-line="241" selection-end-column="111" />
+            <state relative-caret-position="-23">
+              <caret line="223" column="5" selection-start-line="241" selection-start-column="12" selection-end-line="241" selection-end-column="111" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -135,7 +128,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gen_myt.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="360">
@@ -462,16 +455,15 @@
       <workItem from="1557119584176" duration="27000" />
       <workItem from="1557119624365" duration="118695000" />
       <workItem from="1559478447610" duration="595000" />
-      <workItem from="1560914246520" duration="905000" />
+      <workItem from="1560914246520" duration="1771000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="323402000" />
+    <option name="totallyTimeSpent" value="324268000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1431" y="-4" width="1855" height="1084" extended-state="7" />
-    <editor active="true" />
+    <frame x="1431" y="-4" width="1855" height="1084" extended-state="6" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1931378" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -485,10 +477,10 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="File Transfer" order="9" sideWeight="0.4997233" weight="0.33891213" />
+      <window_info anchor="bottom" id="File Transfer" order="9" sideWeight="0.4991699" visible="true" weight="0.33891213" />
       <window_info anchor="bottom" id="Database Changes" order="10" />
       <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5002767" side_tool="true" visible="true" weight="0.3169456" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5008301" side_tool="true" visible="true" weight="0.33891213" />
       <window_info anchor="bottom" id="Python Console" order="13" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -856,16 +848,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gen_myt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="97" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="98" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/gen_2012.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="578">
@@ -876,22 +858,32 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Train_myt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-239">
-          <caret line="241" column="110" selection-start-line="241" selection-start-column="12" selection-end-line="241" selection-end-column="111" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2547">
           <caret line="342" column="26" lean-forward="true" selection-start-line="342" selection-start-column="26" selection-end-line="342" selection-end-column="26" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Train_myt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-23">
+          <caret line="223" column="5" selection-start-line="241" selection-start-column="12" selection-end-line="241" selection-end-column="111" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen_myt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="97" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="98" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
