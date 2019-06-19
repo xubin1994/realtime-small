@@ -332,10 +332,14 @@ def get_laser_loss(name, multiScale=False, logs=False, weights=None, reduced=Tru
 	if max_disp is None:
 		max_disp = 1000
 
-	def compute_loss(disparities, inputs):
+	def compute_loss(disparities, inputs,conf_for_laser=None):
 		left = inputs['left']
 		right = inputs['right']
-		targets = inputs['laser']
+		targets = inputs['line']
+		if conf_for_laser is not None:
+			conf = tf.where(tf.greater(conf_for_laser, 0), conf_for_laser,
+							tf.zeros_like(conf_for_laser, dtype=tf.float32))
+			conf = tf.where(tf.greater(conf, 1), tf.ones_like(conf, dtype=tf.float32), conf)
 		accumulator = []
 		if multiScale:
 			disp_to_test = len(disparities)
@@ -349,9 +353,13 @@ def get_laser_loss(name, multiScale=False, logs=False, weights=None, reduced=Tru
 			current_disp = disparities[-(i + 1)]
 			disparity_scale_factor = tf.cast(tf.shape(left)[2], tf.float32) / tf.cast(tf.shape(current_disp)[2],
 																					  tf.float32)
-			resized_disp = preprocessing.resize_to_prediction(current_disp, targets) * disparity_scale_factor
+			# resized_disp = preprocessing.resize_to_prediction(current_disp,targets) * disparity_scale_factor
+			resized_targets = preprocessing.resize_to_prediction(targets, current_disp) / disparity_scale_factor
 
-			partial_loss = base_loss_function(tf.reshape(resized_disp, [None, None, None,1]), targets, valid_map)
+			if conf_for_laser is not None and (i == disp_to_test - 2 or disp_to_test == 1):
+				valid_map = valid_map * conf
+
+			partial_loss = base_loss_function(current_disp, resized_targets, valid_map)
 			# partial_loss = tf.Print(partial_loss,[disparity_scale_factor,tf.shape(valid_map),tf.reduce_sum(valid_map), tf.reduce_sum(valid_map*resized_disp)/tf.reduce_sum(valid_map), tf.reduce_sum(valid_map*targets)/tf.reduce_sum(valid_map)],summarize=10000)
 			if logs:
 				tf.summary.scalar('Loss_resolution_{}'.format(i), partial_loss)
@@ -393,10 +401,11 @@ def get_reprojection_loss(reconstruction_loss,multiScale=True, logs=False, weigh
 			#rescale prediction to full resolution
 			current_disp = disparities[-(i+1)]
 			disparity_scale_factor = tf.cast(tf.shape(current_disp)[2],tf.float32)/tf.cast(tf.shape(left)[2],tf.float32)
-			resized_disp = preprocessing.resize_to_prediction(current_disp, left) * disparity_scale_factor
-
-			reprojected_left = preprocessing.warp_image(right, resized_disp)
-			partial_loss = base_loss_function(reprojected_left,left)
+			#resized_disp = preprocessing.resize_to_prediction(current_disp, left) * disparity_scale_factor
+			resized_left = preprocessing.resize_to_prediction(left, current_disp)# / disparity_scale_factor
+			resized_right = preprocessing.resize_to_prediction(right, current_disp) #/ disparity_scale_factor
+			reprojected_left = preprocessing.warp_image(resized_right, current_disp)
+			partial_loss = base_loss_function(reprojected_left,resized_left)
 			if logs:
 				tf.summary.scalar('Loss_resolution_{}'.format(i),partial_loss)
 			accumulator.append(weights[i]*partial_loss)

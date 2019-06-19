@@ -203,35 +203,37 @@ def bilinear_sampler(imgs, coords):
 		return output
 
 def warp_image(img, flow):
-	"""
-	Given an image and a flow generate the warped image, for stereo img is the right image, flow is the disparity alligned with left
-	img: image that needs to be warped
-	flow: Generic optical flow or disparity
-	"""
+    """
+    Given an image and a flow generate the warped image, for stereo img is the right image, flow is the disparity alligned with left
+    img: image that needs to be warped
+    flow: Generic optical flow or disparity
+    """
 
-	def build_coords(immy):   
-		max_height = 2048
-		max_width = 2048
-		pixel_coords = np.ones((1, max_height, max_width, 2))
+    def build_coords(immy):
+        max_height = 2048
+        max_width = 2048
+        b = immy.get_shape().as_list()[0]
+        pixel_coords = np.ones((b, max_height, max_width, 2))
 
-		# build pixel coordinates and their disparity
-		for i in range(0, max_height):
-			for j in range(0, max_width):
-				pixel_coords[0][i][j][0] = j
-				pixel_coords[0][i][j][1] = i
+        # build pixel coordinates and their disparity
+        for i in range(0, max_height):
+            for j in range(0, max_width):
+                pixel_coords[0][i][j][0] = j
+                pixel_coords[0][i][j][1] = i
 
-		pixel_coords = tf.constant(pixel_coords, tf.float32)
-		real_height = tf.shape(immy)[1]
-		real_width = tf.shape(immy)[2]
-		real_pixel_coord = pixel_coords[:,0:real_height,0:real_width,:]
-		immy = tf.concat([immy, tf.zeros_like(immy)], axis=-1)
-		output = real_pixel_coord - immy
+        pixel_coords = tf.constant(pixel_coords, tf.float32)
+        real_height = tf.shape(immy)[1]
+        real_width = tf.shape(immy)[2]
+        real_pixel_coord = pixel_coords[:,0:real_height,0:real_width,:]
+        immy = tf.reshape(immy, [b,real_height,real_width,-1])
+        immy = tf.concat([immy, tf.zeros_like(immy)], axis=-1)
+        output = real_pixel_coord - immy
 
-		return output
+        return output
 
-	coords = build_coords(flow)
-	warped = bilinear_sampler(img, coords)
-	return warped
+    coords = build_coords(flow)
+    warped = bilinear_sampler(img, coords)
+    return warped
 
 def _rescale_tf(img,out_shape):
 	"""

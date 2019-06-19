@@ -112,7 +112,7 @@ class dataset():
             self,
             path_file,
             batch_size=4,
-            crop_shape=[320, 960],
+            crop_shape=[320, 704],
             num_epochs=None,
             augment=False,
             is_training=True,
@@ -135,7 +135,7 @@ class dataset():
         left_file_name = files[0]
         right_file_name = files[1]
         gt_file_name = files[2]
-        if (files.shape[0] > 3):
+        if (True):
             laser_file_name = files[3]
         left_image = read_image_from_disc(left_file_name)
         right_image = read_image_from_disc(right_file_name)
@@ -143,24 +143,27 @@ class dataset():
             gt_image = tf.py_func(lambda x: readPFM(x)[0], [gt_file_name], tf.float32)
             gt_image.set_shape([None, None, 1])
         else:
+            a,b = [371,719]
             read_type = tf.uint16 if self._double_prec_gt else tf.uint8
-            gt_image = read_image_from_disc(gt_file_name, shape=[374, 1238, 1], dtype=read_type)
-            left_image = tf.image.resize_image_with_crop_or_pad(left_image, 374, 1238)
-            right_image = tf.image.resize_image_with_crop_or_pad(right_image, 374, 1238)
+            gt_image = read_image_from_disc(gt_file_name, shape=[a, b, 1], dtype=read_type)
+            left_image = tf.image.resize_image_with_crop_or_pad(left_image, a, b)
+            right_image = tf.image.resize_image_with_crop_or_pad(right_image, a, b)
             gt_image = tf.cast(gt_image, tf.float32)
             # if read_type == tf.uint16:#####不是即可
             if self._double_prec_gt:
                 gt_image = gt_image / 256.0
-        if (files.shape[0] > 3):
+        if (True):
             read_type = tf.uint16 if self._double_prec_las else tf.uint8
-            laser_image = read_image_from_disc(laser_file_name, shape=[None, None, 1], dtype=read_type)
+            laser_image = read_image_from_disc(laser_file_name, shape=[a, b, 1], dtype=read_type)
             laser_image = tf.cast(laser_image, tf.float32)
-            laser_image = tf.where(tf.greater(laser_image, 254.5), laser_image,
-                                   tf.zeros_like(laser_image, dtype=tf.float32))
+            #laser_image = tf.where(tf.greater(laser_image, 254.5), laser_image,
+                                   #tf.zeros_like(laser_image, dtype=tf.float32))
             if self._double_prec_las:  #####不是即可
                 laser_image = laser_image / 256.0
+            ##传统算法输入？？在这里转换
+            line_image = laser_image[:,:,:]
 
-
+        '''
         if self._usePfm:##same as gt
             line_image = tf.py_func(lambda x: readPFM(x)[0], [gt_file_name], tf.float32)
             line_image.set_shape([540, 960, 1])
@@ -198,7 +201,6 @@ class dataset():
             gt_image *= mask
             #gt_image = gt_image[:, :tf.shape(left_image)[1], :]
 
-
             #read_type = tf.uint16 if self._double_prec_las else tf.uint8
             #line_image = read_image_from_disc(gt_file_name, shape=[None, None, 1], dtype=read_type)
             line_image = gt_image#tf.cast(line_image, tf.float32)
@@ -206,18 +208,18 @@ class dataset():
             part2 = tf.zeros([line_image.get_shape().as_list()[0] - 272, line_image.get_shape().as_list()[1],
                               line_image.get_shape().as_list()[2]])
             val = line_image[270:272]
-            line_image = tf.concat([part1, val, part2], axis=0)
+            line_image = tf.concat([part1, val, part2], axis=0)'''
             #if self._double_prec_las:  #####不是即可
                 #line_image = line_image / 256.0
 
         # crop gt to fit with image (SGM add some paddings who know why...)
         gt_image = gt_image[:, :tf.shape(left_image)[1], :]
         line_image = line_image[:, :tf.shape(left_image)[1], :]
-        if (files.shape[0] > 3):
+        if (True):
             laser_image = laser_image[:, :tf.shape(left_image)[1], :]
 
         if self._is_training:
-            if (files.shape[0] > 3):
+            if (True):
                 left_image, right_image, gt_image, laser_image,line_image = preprocessing.random_crop(self._crop_shape,
                                                                                            [left_image, right_image,
                                                                                             gt_image, laser_image,line_image])
@@ -232,7 +234,7 @@ class dataset():
 
         if self._augment:
             left_image, right_image = preprocessing.augment(left_image, right_image)
-        return [left_image, right_image, gt_image, laser_image,line_image] if (files.shape[0] > 3) else [left_image, right_image,
+        return [left_image, right_image, gt_image, laser_image,line_image] if (True) else [left_image, right_image,
                                                                                               gt_image,line_image]
 
     def _build_input_pipeline(self):
@@ -248,6 +250,10 @@ class dataset():
         self._usePfm_las = laser_files[0].endswith('pfm') or laser_files[0].endswith('PFM')
         if not self._usePfm:
             gg = cv2.imread(gt_files[0], -1)
+            if gg is None:
+                print(gt_files[0])
+                #print_op = tf.print(gt_files[0], output_stream=sys.stdout)
+                #with tf.control_dependencies([print_op]):
             self._double_prec_gt = (gg.dtype == np.uint16)  ####??32位咋办，用在哪里了
         if not self._usePfm_las:
             hh = cv2.imread(laser_files[0], -1)
