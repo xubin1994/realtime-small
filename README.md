@@ -2,6 +2,7 @@
 双目视差估计与单线激光数据的融合
 
 运行：python3 Train.py
+
                 [-h] [--trainingSet TRAININGSET]
                 [--validationSet VALIDATIONSET] [-o PRETRAINED_DIRECTORY]
                 [--weights WEIGHTS] [--modelName {Dispnet,MADNet,MADNet_old}]
@@ -12,4 +13,5 @@
                 [--decayStep DECAYSTEP]
 
 rescspnkitti文件夹为迁移到kitti数据集后的权重
+
 rescspn2 为训练集Flying Things 3D数据集上训好的模型
