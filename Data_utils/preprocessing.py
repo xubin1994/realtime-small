@@ -45,17 +45,18 @@ def random_crop(crop_shape, tensor_list):
 	start_col = tf.cond(max_col<=tf.zeros_like(max_col), lambda:tf.zeros_like(max_col), lambda: tf.random_uniform([],minval=0,maxval=max_col,dtype=tf.int32))
 	result=[]
 	for x in tensor_list:
-		static_shape = x.get_shape().as_list()####.......
-		if len(static_shape)==3:
+		# static_shape = x.get_shape()#.as_list()####.......
+		# if len(static_shape)==3:
 			#crop
-			temp = x[start_row:start_row+crop_shape[0],start_col:start_col+crop_shape[1],:]
-			#force shape
-			temp.set_shape([crop_shape[0],crop_shape[1],static_shape[-1]])
-		else:
-			#crop
-			temp = x[:,start_row:start_row+crop_shape[0],start_col:start_col+crop_shape[1],:]
-			#force shape
-			temp.set_shape([static_shape[0],crop_shape[0],crop_shape[1],static_shape[-1]])
+		static_shape = x.get_shape()
+		temp = x[start_row:start_row+crop_shape[0],start_col:start_col+crop_shape[1],:]
+		#force shape
+		temp.set_shape([crop_shape[0],crop_shape[1],static_shape[-1]])
+		# else:
+		# 	#crop
+		# 	temp = x[:,start_row:start_row+crop_shape[0],start_col:start_col+crop_shape[1],:]
+		# 	#force shape
+		# 	temp.set_shape([static_shape[0],crop_shape[0],crop_shape[1],static_shape[-1]])
 		result.append(temp)
 	return result
 

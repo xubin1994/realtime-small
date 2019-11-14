@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3dca72a0-a46a-4018-b536-e649ac1ea95a" name="Default Changelist" comment="" />
+    <list default="true" id="3dca72a0-a46a-4018-b536-e649ac1ea95a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Data_utils/data_reader_norinosgbm.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Data_utils/make_nori_flying.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Data_utils/make_nori_kitti2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nets/psmn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Nets/sharedlayers2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Train_psmn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tryfetch2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Real-time-self-adaptive-deep-stereo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Real-time-self-adaptive-deep-stereo.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_utils/data_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/data_reader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_utils/data_reader_nori.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/data_reader_nori.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_utils/make_nori_kitti.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/make_nori_kitti.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_utils/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/preprocessing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_utils/read_nori.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/read_nori.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data_utils/weights_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/weights_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Losses/loss_factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/Losses/loss_factory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nets/Native/MadNet_before.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nets/Native/disp.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nets/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Nets/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nets/sharedLayers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Nets/sharedLayers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Stereo_Online_Adaptation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Stereo_Online_Adaptation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train2012.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train2012.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train_dispnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_dispnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train_first.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_first.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train_myt.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_myt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train_nconv.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_nconv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rruntry.py" beforeDir="false" afterPath="$PROJECT_DIR$/rruntry.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,118 +62,6 @@
     <expand />
     <select />
   </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Train.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2547">
-              <caret line="342" column="26" lean-forward="true" selection-start-line="342" selection-start-column="26" selection-end-line="342" selection-end-column="26" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Train_myt.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-23">
-              <caret line="223" column="5" selection-start-line="241" selection-start-column="12" selection-end-line="241" selection-end-column="111" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Data_utils/preprocessing.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5400">
-              <caret line="227" column="60" selection-start-line="227" selection-start-column="60" selection-end-line="227" selection-end-column="60" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Nets/MadNet.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1320">
-              <caret line="60" column="47" selection-start-line="60" selection-start-column="33" selection-end-line="60" selection-end-column="47" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Data_utils/data_reader.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="29" column="25" selection-end-line="293" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Data_utils/data_reader_myt.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3744">
-              <caret line="163" column="42" selection-start-line="163" selection-start-column="42" selection-end-line="163" selection-end-column="42" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Nets/ref2.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="19" column="49" selection-start-line="18" selection-start-column="8" selection-end-line="19" selection-end-column="49" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gen_final.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="29" column="145" selection-start-line="29" selection-start-column="4" selection-end-line="29" selection-end-column="145" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/gen_myt.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="20" column="97" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="98" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -149,151 +69,14 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>eight_</find>
-      <find>fgc</find>
-      <find>propa</find>
-      <find>EnforcePos</find>
-      <find>register_forward_pre_hook</find>
-      <find>Mad</find>
-      <find>init_parameters</find>
-      <find>softpl</find>
-      <find>EPE_inserted</find>
-      <find>print_op</find>
-      <find>nconv</find>
-      <find>print</find>
-      <find>max_poo</find>
-      <find>resize_image_wi</find>
-      <find>parame</find>
-      <find>FULLY_DIFFERENTIABLE</find>
-      <find>_double_prec_gt</find>
-      <find>files.shape[0] &gt; 3</find>
-      <find>crop_shape</find>
-      <find>_is_training</find>
-      <find>320</find>
-      <find>32</find>
-      <find>build_</find>
-      <find>preprocessing</find>
-      <find>warp</find>
-      <find>preprocessing.</find>
-      <find>read_image_from_disc</find>
-      <find>myt</find>
-      <find>:,</find>
-      <find>tart_time</find>
-    </findStrings>
-    <replaceStrings>
-      <replace>line</replace>
-      <replace>fu</replace>
-      <replace>min</replace>
-      <replace>tf</replace>
-      <replace>minimum</replace>
-      <replace>True</replace>
-    </replaceStrings>
-    <dirStrings>
-      <dir>$PROJECT_DIR$</dir>
-    </dirStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/Nets/Native/shift_corr.cu.cc" />
-        <option value="$PROJECT_DIR$/Nets/Native/Makefile" />
-        <option value="$PROJECT_DIR$/gen_training_set.py" />
-        <option value="$PROJECT_DIR$/reader2.py" />
-        <option value="$PROJECT_DIR$/gttoline.py" />
-        <option value="$PROJECT_DIR$/eval.py" />
-        <option value="$PROJECT_DIR$/aug.py" />
-        <option value="$PROJECT_DIR$/Traintmp.py" />
-        <option value="$PROJECT_DIR$/gen_2012.py" />
-        <option value="$PROJECT_DIR$/gen_flying.py" />
-        <option value="$PROJECT_DIR$/readPFM.py" />
-        <option value="$PROJECT_DIR$/Data_utils/data_reader_bad.py" />
-        <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/Train2012.py" />
-        <option value="$PROJECT_DIR$/block_config/MadNet_full.json" />
-        <option value="$PROJECT_DIR$/Stereo_Online_Adaptation.py" />
-        <option value="$PROJECT_DIR$/Nets/Stereo_net.py" />
-        <option value="$PROJECT_DIR$/Data_utils/weights_utils.py" />
-        <option value="$PROJECT_DIR$/Train_nconv.py" />
-        <option value="$PROJECT_DIR$/Nets/MadNet_prev.py" />
-        <option value="$PROJECT_DIR$/Nets/Native/MadNet_after.py" />
-        <option value="$PROJECT_DIR$/Nets/Native/MadNet_before.py" />
-        <option value="$PROJECT_DIR$/Train_before.py" />
-        <option value="$PROJECT_DIR$/Train_first.py" />
-        <option value="$PROJECT_DIR$/Nets/__init__.py" />
-        <option value="$PROJECT_DIR$/Nets/MadNet_old.py" />
-        <option value="$PROJECT_DIR$/Nets/MadNet.py" />
-        <option value="$PROJECT_DIR$/Nets/ref.py" />
-        <option value="$PROJECT_DIR$/Nets/sharedLayers.py" />
-        <option value="$PROJECT_DIR$/Nets/ref2.py" />
-        <option value="$PROJECT_DIR$/Losses/loss_factory.py" />
-        <option value="$PROJECT_DIR$/Data_utils/data_reader_myt.py" />
-        <option value="$PROJECT_DIR$/gen_final.py" />
-        <option value="$PROJECT_DIR$/gen_myt.py" />
-        <option value="$PROJECT_DIR$/Data_utils/data_reader.py" />
-        <option value="$PROJECT_DIR$/Data_utils/preprocessing.py" />
-        <option value="$PROJECT_DIR$/Train.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1431" />
-    <option name="y" value="-4" />
-    <option name="width" value="1855" />
-    <option name="height" value="1084" />
-  </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="462c0819:PsiDirectoryNode" />
-              <item name="block_config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="462c0819:PsiDirectoryNode" />
-              <item name="Data_utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="462c0819:PsiDirectoryNode" />
-              <item name="Losses" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="462c0819:PsiDirectoryNode" />
-              <item name="Nets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Real-time-self-adaptive-deep-stereo-laser" type="462c0819:PsiDirectoryNode" />
-              <item name="Nets" type="462c0819:PsiDirectoryNode" />
-              <item name="Native" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-    </panes>
-  </component>
+  <component name="ProjectId" id="1RH6qzXBpxiMrNCks2Op9pOeoNs" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../huifu/MonoDepth-PyTorch-master" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../xiongpengfei_config_190830.lijiankun.cnct_input.disp.5stage.nosgbm.size_aug.addsintel.weight_model.py" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -456,437 +239,31 @@
       <workItem from="1557119624365" duration="118695000" />
       <workItem from="1559478447610" duration="595000" />
       <workItem from="1560914246520" duration="1771000" />
+      <workItem from="1569311871543" duration="801000" />
+      <workItem from="1569319352573" duration="904000" />
+      <workItem from="1569321147943" duration="1133000" />
+      <workItem from="1569377891470" duration="6175000" />
+      <workItem from="1569387498114" duration="9301000" />
+      <workItem from="1569825514800" duration="897000" />
+      <workItem from="1572334113997" duration="41092000" />
+      <workItem from="1572579537344" duration="52697000" />
     </task>
     <servers />
-  </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="324268000" />
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="1431" y="-4" width="1855" height="1084" extended-state="6" />
-    <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1931378" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4997233" visible="true" weight="0.31903765" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="File Transfer" order="9" sideWeight="0.4991699" visible="true" weight="0.33891213" />
-      <window_info anchor="bottom" id="Database Changes" order="10" />
-      <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5008301" side_tool="true" visible="true" weight="0.33891213" />
-      <window_info anchor="bottom" id="Python Console" order="13" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.24958494" />
-      <window_info anchor="right" id="Remote Host" order="3" />
-      <window_info anchor="right" id="Database" order="4" visible="true" weight="0.02102933" />
-      <window_info anchor="right" id="SciView" order="5" weight="0.32982844" />
-    </layout>
-    <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1776425" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31903765" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" />
-      <window_info anchor="bottom" id="File Transfer" order="9" weight="0.33943966" />
-      <window_info anchor="bottom" id="Database Changes" order="10" />
-      <window_info anchor="bottom" id="Terminal" order="11" />
-      <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="13" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Remote Host" order="3" />
-      <window_info anchor="right" id="SciView" order="4" />
-      <window_info anchor="right" id="Database" order="5" visible="true" weight="0.021582734" />
-    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/images/MADNet.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/Native/shift_corr.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="1" column="15" selection-start-line="1" selection-start-column="15" selection-end-line="1" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/Native/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="51" column="121" selection-start-line="51" selection-start-column="121" selection-end-line="51" selection-end-column="121" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/Native/shift_corr.cu.cc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="4" column="28" selection-start-line="4" selection-start-column="28" selection-end-line="4" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gttoline.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_training_set.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1224">
-          <caret line="51" column="50" selection-start-line="51" selection-start-column="50" selection-end-line="51" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/aug.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret lean-forward="true" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../flower/CNN_flower_classification.py" />
-    <entry file="file://$PROJECT_DIR$/eval.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2808">
-          <caret line="127" column="88" selection-start-line="127" selection-start-column="88" selection-end-line="127" selection-end-column="88" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_flying.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1992">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_utils/data_reader_bad.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="111" column="32" selection-start-line="111" selection-start-column="32" selection-end-line="111" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="186" column="41" selection-start-line="186" selection-start-column="41" selection-end-line="186" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example_list.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-144" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/readPFM.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-596">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_utils/data_reader_old.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39">
-          <caret line="131" column="31" selection-start-line="131" selection-start-column="31" selection-end-line="131" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/block_config/MadNet_full.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="5" column="310" selection-start-line="5" selection-start-column="310" selection-end-line="5" selection-end-column="310" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Train2012.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="149">
-          <caret line="231" column="59" selection-start-line="231" selection-start-column="33" selection-end-line="231" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Sampler/sampler_factory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1282">
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Losses/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/Native/MadNet_before.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3590">
-          <caret line="788" selection-start-line="788" selection-end-line="788" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Train_nconv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1278">
-          <caret line="225" column="88" selection-start-line="225" selection-start-column="88" selection-end-line="225" selection-end-column="88" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/MadNet_sub.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="184" column="27" selection-start-line="184" selection-start-column="26" selection-end-line="184" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="7" column="60" lean-forward="true" selection-start-line="7" selection-start-column="60" selection-end-line="7" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_utils/weights_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="51" column="37" selection-start-line="51" selection-start-column="4" selection-end-line="51" selection-end-column="38" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/MadNet_mycspn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="601" column="54" selection-end-line="700" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Train_first.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1810">
-          <caret line="291" column="102" selection-start-line="291" selection-start-column="102" selection-end-line="291" selection-end-column="102" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/Stereo_net.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="80" column="39" selection-start-line="80" selection-start-column="39" selection-end-line="80" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/MadNet_old.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="303">
-          <caret line="385" column="101" lean-forward="true" selection-start-line="384" selection-start-column="60" selection-end-line="385" selection-end-column="101" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/sharedLayers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="124">
-          <caret line="73" column="8" selection-start-line="73" selection-start-column="8" selection-end-line="73" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_utils/data_reader_kdepth.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1301">
-          <caret line="189" column="21" lean-forward="true" selection-start-line="175" selection-start-column="8" selection-end-line="198" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Stereo_Online_Adaptation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6384">
-          <caret line="305" column="126" selection-start-line="305" selection-start-column="119" selection-end-line="305" selection-end-column="126" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Losses/loss_factory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9744">
-          <caret line="407" column="76" selection-start-line="407" selection-start-column="76" selection-end-line="407" selection-end-column="76" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_utils/preprocessing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5400">
-          <caret line="227" column="60" selection-start-line="227" selection-start-column="60" selection-end-line="227" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/MadNet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1320">
-          <caret line="60" column="47" selection-start-line="60" selection-start-column="33" selection-end-line="60" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_utils/data_reader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="29" column="25" selection-end-line="293" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Data_utils/data_reader_myt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3744">
-          <caret line="163" column="42" selection-start-line="163" selection-start-column="42" selection-end-line="163" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Nets/ref2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="19" column="49" selection-start-line="18" selection-start-column="8" selection-end-line="19" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_final.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="29" column="145" selection-start-line="29" selection-start-column="4" selection-end-line="29" selection-end-column="145" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_2012.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="48" column="71" selection-start-line="48" selection-start-column="71" selection-end-line="48" selection-end-column="71" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2547">
-          <caret line="342" column="26" lean-forward="true" selection-start-line="342" selection-start-column="26" selection-end-line="342" selection-end-column="26" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Train_myt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-23">
-          <caret line="223" column="5" selection-start-line="241" selection-start-column="12" selection-end-line="241" selection-end-column="111" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gen_myt.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="97" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="98" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

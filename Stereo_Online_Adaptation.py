@@ -10,7 +10,7 @@ import json
 import datetime
 import shutil
 from matplotlib import pyplot as plt
-from Data_utils import data_reader,weights_utils,preprocessing
+from Data_utils import data_reader_correct_kitti,weights_utils,preprocessing
 from Losses import loss_factory
 from Sampler import sampler_factory
 
@@ -34,7 +34,7 @@ def main(args):
 	
 	#read input data
 	with tf.variable_scope('input_reader'):
-		data_set = data_reader.dataset(
+		data_set = data_reader_correct_kitti.dataset(
 			args.list,
 			batch_size = 1,
 			crop_shape=args.imageShape,

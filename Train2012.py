@@ -10,7 +10,7 @@ import json
 import datetime
 import shutil
 from matplotlib import pyplot as plt
-from Data_utils import data_reader, weights_utils, preprocessing
+from Data_utils import data_reader_correct_kitti, weights_utils, preprocessing
 from Losses import loss_factory
 from Sampler import sampler_factory
 
@@ -24,7 +24,7 @@ def main(args):
     # read input data
     with tf.name_scope('input_reader'):
         with tf.name_scope('training_set_reader'):
-            data_set = data_reader.dataset(
+            data_set = data_reader_correct_kitti.dataset(
                 args.trainingSet,
                 batch_size=args.batchSize,
                 crop_shape=args.imageShape,
@@ -42,7 +42,7 @@ def main(args):
             }
         if args.validationSet is not None:
             with tf.name_scope('validation_set_reader'):
-                validation_set = data_reader.dataset(
+                validation_set = data_reader_correct_kitti.dataset(
                     args.validationSet,
                     batch_size=args.batchSize,
                     augment=False,

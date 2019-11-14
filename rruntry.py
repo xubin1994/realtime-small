@@ -4,8 +4,8 @@ client = rrun.Client()
 
 spec = rrun.RunnerSpec()
 spec.name = 'my-runner'
-spec.commands[:] = ['bash', '-c', 'python3 Traintmp.py']
-spec.log_dir = '/home/jiangying/logs2'
+spec.commands[:] = ['bash', '-c', 'ulimit -n 65535; python Train_dispnet.py']
+spec.log_dir = '/home/jiangying/logs'
 spec.scheduling_hint.group = '' # Inherit from master
 spec.resources.cpu = 2
 spec.resources.gpu = 1

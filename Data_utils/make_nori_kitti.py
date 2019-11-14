@@ -4,7 +4,65 @@ import  numpy as np
 import pickle
 import os
 import cv2
+import PIL.Image as Image
 import re
+
+class SGBM():
+    def __init__(self, longedge=960, wsize=5, downscale=1.0, minDisp=0, maxDisparity=256):
+
+        self.downScale = downscale
+        self.longEdge = int(longedge / self.downScale)
+        self.minDisp = int(minDisp / self.downScale)
+        self.maxDisparity = int(maxDisparity / self.downScale)
+
+        if self.maxDisparity % 16 != 0:
+            self.maxDisparity += 16 - self.maxDisparity % 16
+
+        self.wsize = max(1, int(wsize / self.downScale))
+
+        if self.wsize % 2 == 0:
+            self.wsize += 1
+
+        self.stereo = cv2.StereoSGBM_create(
+            minDisparity=self.minDisp,
+            numDisparities=self.maxDisparity,
+            blockSize=self.wsize,
+            P1=8 * 3 * self.wsize * self.wsize,
+            P2=64 * 3 * self.wsize * self.wsize,
+            disp12MaxDiff=-1,
+            uniquenessRatio=10,
+            speckleWindowSize=100,
+            speckleRange=1,  # 32,
+            preFilterCap=10,  # 63,
+            mode=cv2.STEREO_SGBM_MODE_HH4,
+        )
+
+    def solve(self, left, right):
+
+        h, w = left.shape[:2]##注意是反
+        # jy--
+        # if left.shape[1] > left.shape[0]:
+        #     outw = self.longEdge
+        #     outh = int(outw / left.shape[1] * left.shape[0])
+        # else:
+        #     outh = self.longEdge
+        #     outw = int(outh / left.shape[0] * left.shape[1])
+        #
+        # left = cv2.resize(left, (outw, outh), interpolation=cv2.INTER_AREA)
+        # right = cv2.resize(right, (outw, outh), interpolation=cv2.INTER_AREA)
+
+        left = cv2.copyMakeBorder(left, 0, 0, self.maxDisparity, 0, cv2.BORDER_REPLICATE)
+        right = cv2.copyMakeBorder(right, 0, 0, self.maxDisparity, 0, cv2.BORDER_REPLICATE)
+
+        disp = self.stereo.compute(left, right)
+
+        disp = disp.astype('float32') / 16.0 * self.downScale
+        # disp = cv2.convertScaleAbs(disp, alpha=1.0 / 16.0 * self.downScale, beta=-self.orgMinDisp * 4)
+        disp = disp[:, self.maxDisparity:]
+
+        disp = cv2.resize(disp, (w, h), interpolation=cv2.INTER_NEAREST)
+        return disp
+
 def readPFM(file):
     """
     Load a pfm file as a numpy array
@@ -55,13 +113,13 @@ def readPFM(file):
 # path3  = "/unsullied/sharefs/jiangying/data/flying/disparity/TRAIN/A/0000/left/0006.pfm"
 
 
-ls = open("./nori_KITTI_train.list", "w")
+ls = open("./nori2_KITTI_train.list", "w")
 l = int(-len('2011_10_03_drive_0042_sync/image_02/data/0000000005.png'))
 print(l)
 with open("realtimelinefirstcspn/csvFile2train_laser_KITTInew.csv", 'r') as f_in:##val
     lines = f_in.readlines()
 lines = [x for x in lines if not x.strip()[0] == '#']
-nw = nori.open("/unsullied/sharefs/jiangying/data/nori_KITTI_train.nori", "w")
+nw = nori.open("/unsullied/sharefs/jiangying/data/nori2_KITTI_train.nori", "w")
 for l in lines:
     to_load = re.split(',|;', l.strip())
     path1 = to_load[0]
@@ -70,6 +128,7 @@ for l in lines:
     path4 = to_load[3]
 
     img = cv2.imread(path1)
+    left_img = img
     # '.jpg'means that the img of the current picture is encoded in jpg format, and the result of encoding in different formats is different.
     #img_encode = cv2.imencode('.jpg', img)[1]
     img_encode = cv2.imencode('.png', img)[1]
@@ -77,22 +136,33 @@ for l in lines:
     data_encode1 = img_encode
     # print(data_encode1)
     img = cv2.imread(path2)
+    right_img = img
     # '.jpg'means that the img of the current picture is encoded in jpg format, and the result of encoding in different formats is different.
     #img_encode = cv2.imencode('.jpg', img)[1]
     img_encode = cv2.imencode('.png', img)[1]
     ###data_encode2 = np.array(img_encode)
     data_encode2 = img_encode
 
-    img = cv2.imread(path3)
+    img = Image.open(path3)
     img_encode = np.array(img)##imencode cannot np.uint16
     ###data_encode2 = np.array(img_encode)
     data_encode3 = img_encode
 
     # print(data_encode3)
-    img = cv2.imread(path4)
-    img_encode = cv2.imencode('.png', img)[1]
-    ###data_encode2 = np.array(img_encode)
-    data_encode4 = img_encode
+    Sgbm = SGBM(longedge=max(left_img.shape[0], left_img.shape[1]), downscale=1.0, wsize=5, minDisp=0,
+                maxDisparity=256)
+    sgbm = Sgbm.solve(left_img, right_img)
+
+    # sgbm = sgbm[:, 160:]#黑边 done
+    # print(sgbm.shape)
+    # sgbm = cv2.resize(sgbm, (left_img.shape[1], left_img.shape[0]), interpolation=cv2.INTER_NEAREST)
+    sgbm = np.expand_dims(sgbm, axis=-1)
+    data_encode4 =sgbm
+
+    # img = cv2.imread(path4)
+    # img_encode = cv2.imencode('.png', img)[1]
+    # ###data_encode2 = np.array(img_encode)
+    # data_encode4 = img_encode
 
     path1 = path1[-55:-4]
     ff = {'left':data_encode1,'right':data_encode2,'sgbm':data_encode4,'gt':data_encode3, 'name':path1 }

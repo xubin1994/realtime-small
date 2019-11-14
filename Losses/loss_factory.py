@@ -35,8 +35,8 @@ def mean_l1(x,y,mask=None):
 	"""
 	if mask is None:
 		mask=tf.ones_like(x, dtype=tf.float32)
-	y = tf.reshape(y, x.get_shape().as_list())
-	mask= tf.reshape(mask, x.get_shape().as_list())
+	y = tf.reshape(y, tf.shape(x))#x.get_shape().as_list()
+	#mask= tf.reshape(mask, )#x.get_shape().as_list()
 	return tf.reduce_sum(mask*tf.abs(x-y))/tf.reduce_sum(mask)
 
 def mean_l2(x,y,mask=None):
@@ -274,7 +274,7 @@ def get_supervised_loss(name, multiScale=False, logs=False, weights=None, reduce
 	if weights is None:
 		weights = [1]*10
 	if max_disp is None:
-		max_disp=1000
+		max_disp=192
 	def compute_loss(disparities,inputs,conf_for_laser):
 		left = inputs['left']
 		right = inputs['right']

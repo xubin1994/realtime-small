@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" serverName="hh-b">
     <serverData>
-      <paths name="Copy of project-level server 'nj-a-internal.brainpp.cn'">
+      <paths name="hh-b">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/jiangying/realtimelinefirst" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/jiangying/realtimedisp" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

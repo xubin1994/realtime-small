@@ -72,4 +72,4 @@ def check_for_weights_or_restore_them(logdir, session, initial_weights=None, pre
         #return False,0,[]
     else:
         print('Unable to restore any weight')
-        return False,0
+        return False,0,[]
