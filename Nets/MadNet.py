@@ -207,7 +207,7 @@ class MadNet(Stereo_net.StereoNet):
             for i in range(8):
                 gates.append(tf.expand_dims(guidance[:, :, :, i], axis=-1))
 
-            sparse_mask = tf.where(tf.less(sparse_depth, 0.0),
+            sparse_mask = tf.where(tf.less(sparse_depth, 0.0),##注意，成了负数小于0.。。
                                    tf.ones_like(sparse_depth, dtype=tf.float32),
                                    tf.zeros_like(sparse_depth, dtype=tf.float32))
             result_depth = (1 - sparse_mask) * blur_depth + sparse_mask * sparse_depth

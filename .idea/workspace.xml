@@ -2,37 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3dca72a0-a46a-4018-b536-e649ac1ea95a" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/Data_utils/data_reader_norinosgbm.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Data_utils/make_nori_flying.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Data_utils/make_nori_kitti2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nets/psmn.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Nets/sharedlayers2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Train_psmn.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tryfetch2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Real-time-self-adaptive-deep-stereo.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Real-time-self-adaptive-deep-stereo.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/data_reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/data_reader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/data_reader_nori.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/data_reader_nori.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/make_nori_kitti.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/make_nori_kitti.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/preprocessing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/read_nori.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/read_nori.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data_utils/weights_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/Data_utils/weights_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Losses/loss_factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/Losses/loss_factory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nets/Native/MadNet_before.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nets/Native/disp.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Nets/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/Nets/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nets/MadNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/Nets/MadNet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nets/Stereo_net.py" beforeDir="false" afterPath="$PROJECT_DIR$/Nets/Stereo_net.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Nets/disp.py" beforeDir="false" afterPath="$PROJECT_DIR$/Nets/disp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Nets/sharedLayers.py" beforeDir="false" afterPath="$PROJECT_DIR$/Nets/sharedLayers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Stereo_Online_Adaptation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Stereo_Online_Adaptation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Train.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Train2012.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train2012.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Train_dispnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_dispnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Train_first.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_first.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Train_myt.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_myt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Train_nconv.py" beforeDir="false" afterPath="$PROJECT_DIR$/Train_nconv.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rruntry.py" beforeDir="false" afterPath="$PROJECT_DIR$/rruntry.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +53,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../xiongpengfei_config_190830.lijiankun.cnct_input.disp.5stage.nosgbm.size_aug.addsintel.weight_model.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../disp" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -246,7 +223,7 @@
       <workItem from="1569387498114" duration="9301000" />
       <workItem from="1569825514800" duration="897000" />
       <workItem from="1572334113997" duration="41092000" />
-      <workItem from="1572579537344" duration="52697000" />
+      <workItem from="1572579537344" duration="74134000" />
     </task>
     <servers />
   </component>

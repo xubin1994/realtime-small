@@ -5,7 +5,7 @@
       <paths name="hh-b">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/jiangying/realtimedisp" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/home/jiangying/disp_cspn" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

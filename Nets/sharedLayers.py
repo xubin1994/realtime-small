@@ -359,7 +359,7 @@ def make_encoder(data):
     # 640
     print(data.get_shape())
     #data.get_shape().as_list()[3]
-    conv0 = conv2d(data, name="conv00", kernel_shape=[3, 3, 9,16],
+    conv0 = conv2d(data, name="conv00", kernel_shape=[3, 3, 7,16],
            strides=2, batch_norm=True, activation=LEAKY_RELU)
     # conv0 = swishnorm('conv00-swish', conv0)
 
@@ -417,8 +417,8 @@ def make_network(data):
         print(b.get_shape())
 
     up_former = None
-    in_ch = [16, 16, 16, 8, 4]
-    out_ch = [16, 16, 8, 4, 4]
+    in_ch = [16, 16, 16, 8, 9]
+    out_ch = [16, 16, 8, 9, 4]## last 4 not used
     is_conv_block = [True, True, False, False, False]
     for i in range(len(blocks)):
         if is_conv_block[i]:
@@ -433,10 +433,23 @@ def make_network(data):
         if i < len(blocks) - 1:
             up_former = deconv('resize%d2' % i, up_former, kernel_shape=2, output_nr_channel=out_ch[i], padding=0, stride=2, has_bn=True, has_relu=False)
 
-    up0 = deconv('avg', up_former, kernel_shape=2, output_nr_channel=1, padding=0, stride=2, has_bn=False, has_relu=False)
-    pred = tf.math.sigmoid(up0) * 192
+    ##最后一次up0之前扩散
+    out_9 =up_former
+    part1 = out_9[:, :, :, 0]##deconv and sigmoid as prev
+    part1 = tf.expand_dims(part1, axis=-1)
+    part2 = out_9[:, :, :, 1:]  # 8 kernels
+    '''
+           out_3 = tf.concat([part1, part2], axis=3)
+           final_disp = out_9
+           self._add_to_layers('final_disp3', out_3)'''
+    # guidance8, x1, sparsedepth1
+    # expect part1: normal, part2:0~1, get laser-->normal
 
-    return pred
+
+    up0 = deconv('avg', part1, kernel_shape=2, output_nr_channel=1, padding=0, stride=2, has_bn=False, has_relu=False)
+    pred = tf.math.sigmoid(up0) * 192
+    part1 = tf.math.sigmoid(part1) * 192
+    return [part1, part2, pred]
 
 def deconv(name, data, kernel_shape, output_nr_channel, padding, stride=1, has_bn=True, has_relu=False):
     # deconv('avg', up_former, kernel_shape=2, output_nr_channel=1, padding=0, stride=2, has_bn=False, has_relu=False)

@@ -27,6 +27,7 @@ class StereoNet(object):
         self._layers = OrderedDict()
         self._disparities = []
         self.my_disparities = []
+        self.final_disp_inserteds = []
         self._placeholders = []
         self._placeholderable = []
         self._trainable_variables = OrderedDict() #Porcata per avere un ordered set...
@@ -227,6 +228,8 @@ class StereoNet(object):
         """
         return self._disparities
 
+    def get_final_disp_inserteds(self):
+        return self.final_disp_inserteds
     def get_my_disparities(self):
         """
         Return all the disparity predicted with increasing resolution

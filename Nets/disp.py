@@ -207,7 +207,7 @@ class MadNet(Stereo_net.StereoNet):
             for i in range(8):
                 gates.append(tf.expand_dims(guidance[:, :, :, i], axis=-1))
 
-            sparse_mask = tf.where(tf.less(sparse_depth, 0.0),
+            sparse_mask = tf.where(tf.greater(sparse_depth, 0.0),
                                    tf.ones_like(sparse_depth, dtype=tf.float32),
                                    tf.zeros_like(sparse_depth, dtype=tf.float32))
             result_depth = (1 - sparse_mask) * blur_depth + sparse_mask * sparse_depth
@@ -286,17 +286,17 @@ class MadNet(Stereo_net.StereoNet):
 
         return out, wt
 
-    def min_of_4_tensor(self, elements):
+    def min_of_4_tensor(self, elements):##was negative before
         element1, element2, element3, element4 = elements
-        min_element1_2 = tf.minimum(element1, element2)
-        min_element3_4 = tf.minimum(element3, element4)
-        return tf.minimum(min_element1_2, min_element3_4)
+        min_element1_2 = tf.maximum(element1, element2)
+        min_element3_4 = tf.maximum(element3, element4)
+        return tf.maximum(min_element1_2, min_element3_4)
 
     def min_of_8_tensor(self, elements):
         element1, element2, element3, element4, element5, element6, element7, element8 = elements
         min_element1_2 = self.min_of_4_tensor([element1, element2, element3, element4])
         min_element3_4 = self.min_of_4_tensor([element5, element6, element7, element8])
-        return tf.minimum(min_element1_2, min_element3_4)
+        return tf.maximum(min_element1_2, min_element3_4)
 
 
     def _build_network(self, args):
@@ -317,8 +317,42 @@ class MadNet(Stereo_net.StereoNet):
 
         conc =tf.concat([left, right, sgbm], axis=-1)
         # print(conc.get_shape())
-        pred = sharedLayers.make_network(conc)
+        part1, part2, pred = sharedLayers.make_network(conc)
+        rescaled_prediction_prev = tf.image.resize_images(pred, [image_height, image_width])
+        self._layers['rescaled_prediction_prev'] = tf.image.resize_image_with_crop_or_pad(rescaled_prediction_prev,
+                                                                                          self._restore_shape[0],
+                                                                                          self._restore_shape[1])
+        sparsedepth = tf.image.resize_images(self._line_input_batch,
+                                             [part1.get_shape()[1].value, part1.get_shape()[2].value])##看代码应该是直接结果了。试试，不行再放大。反正是warp完了过context，应该学会了
+        # print_op = tf.print(tf.reduce_sum(sparsedepth), output_stream=sys.stdout)
+        # with tf.control_dependencies([print_op]):
+        final_disps, final_disp_inserteds = self.affinity_propagate(part2, part1, sparsedepth)
 
+        self._add_to_layers('final_disp', final_disps[-2])
+        rescaled_prediction = tf.image.resize_images(self._get_layer_as_input('final_disp'),
+                                                     [image_height, image_width])
+        self._layers['rescaled_prediction'] = tf.image.resize_image_with_crop_or_pad(rescaled_prediction,
+                                                                                     self._restore_shape[0],
+                                                                                     self._restore_shape[1])
+        self._disparities.append(self._layers['rescaled_prediction_prev'])
+        self._disparities.append(self._layers['rescaled_prediction'])
+        for d in final_disp_inserteds:
+            rescaled_prediction = tf.image.resize_images(d,
+                                                         [image_height, image_width])
+            rescaled_prediction = tf.image.resize_image_with_crop_or_pad(rescaled_prediction,
+                                                                         self._restore_shape[0],
+                                                                         self._restore_shape[1])
+
+            self.final_disp_inserteds.append(rescaled_prediction)
+
+        self._add_to_layers('final_disp_inserted', final_disp_inserteds[-2])
+        rescaled_prediction_inserted = tf.image.resize_images(self._get_layer_as_input('final_disp_inserted'),
+                                                              [image_height, image_width])
+        self._layers['rescaled_prediction_inserted'] = tf.image.resize_image_with_crop_or_pad(
+            rescaled_prediction_inserted,
+            self._restore_shape[0],
+            self._restore_shape[1])
+        self._disparities.append(self._layers['rescaled_prediction_inserted'])
 
         # loss
         # train_loss = get_loss_l1(pred, label, mask, name='train_loss')
@@ -330,10 +364,7 @@ class MadNet(Stereo_net.StereoNet):
         # O.param_init.set_opr_states_from_network(network.outputs_visitor.all_oprs, modelpath, check_shape=False)
 
 
-        self._layers['rescaled_prediction_prev'] = tf.image.resize_image_with_crop_or_pad(pred,
-                                                                                          self._restore_shape[0],
-                                                                                          self._restore_shape[1])
-        self._disparities.append(self._layers['rescaled_prediction_prev'])
+
 
     def _leaky_relu(self):
         return lambda x: tf.maximum(0.2 * x, x)

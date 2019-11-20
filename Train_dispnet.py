@@ -75,10 +75,10 @@ def main(args):
         # my_predictions = stereo_net.get_my_disparities()
 
         # full_res_disp_prev = predictions[-3]
-        # full_res_disp = predictions[-2]
-        # full_res_disp_inserted = predictions[-1]
+        full_res_disp = predictions[-2]
+        full_res_disp_inserted = predictions[-1]
 
-        full_res_disp = predictions[-1]
+        # full_res_disp = predictions[-1]
 
         # predictions+=my_predictions
         # output_laser_conf=stereo_net.get_laser_conf()
@@ -92,7 +92,11 @@ def main(args):
             net_args['conf_img'] = conf_val_batch
             val_stereo_net = Nets.get_stereo_net(args.modelName, net_args)
 
-            val_prevprediction = val_stereo_net.get_disparities()[-1]
+
+            val_prediction_inserted = val_stereo_net.get_disparities()[-1]
+            val_prediction = val_stereo_net.get_disparities()[-2]
+            val_prevprediction = val_stereo_net.get_disparities()[-3]
+            inserteds = val_stereo_net.get_final_disp_inserteds()
             # val_prediction = val_stereo_net.get_disparities()[-2]
             # val_prevprediction = val_stereo_net.get_disparities()[-3]
             # inserteds = val_stereo_net.get_final_disp_inserteds()
@@ -107,69 +111,64 @@ def main(args):
         with tf.variable_scope('validation_error'):
             # compute error against gt
             # abs_err = tf.abs(val_prediction - gt_val_batch)/gt_val_batch
-
-
-            # abs_err = tf.abs(val_prediction - gt_val_batch)
+            abs_err = tf.abs(val_prediction - gt_val_batch)
             abs_err_prev = tf.abs(val_prevprediction - gt_val_batch)
-
-            # abs_err_inserted = tf.abs(val_prediction_inserted - gt_val_batch)
-            # abs_errs = [tf.abs(val_prediction_inserted - gt_val_batch) for val_prediction_inserted in inserteds]
-
+            abs_err_inserted = tf.abs(val_prediction_inserted - gt_val_batch)
+            abs_errs = [tf.abs(val_prediction_inserted - gt_val_batch) for val_prediction_inserted in inserteds]
             # abs_err_ori = tf.abs(laser_val_batch/16 - gt_val_batch)
             valid_map = tf.where(tf.equal(gt_val_batch, 0), tf.zeros_like(gt_val_batch, dtype=tf.float32),
                                  tf.ones_like(gt_val_batch, dtype=tf.float32))
             valid_map_ori = valid_map * tf.where(tf.equal(laser_val_batch, 0),
                                                  tf.zeros_like(laser_val_batch, dtype=tf.float32),
                                                  tf.ones_like(laser_val_batch, dtype=tf.float32))
-            # filtered_error = abs_err * valid_map
+            filtered_error = abs_err * valid_map
             filtered_error_prev = abs_err_prev * valid_map
-            # filtered_error_inserted = abs_err_inserted * valid_map
-            # filtered_errors = [inserted * valid_map for inserted in abs_errs]
+            filtered_error_inserted = abs_err_inserted * valid_map
+            filtered_errors = [inserted * valid_map for inserted in abs_errs]
             # filtered_error_ori = abs_err_ori * valid_map_ori
 
-            # EPE = tf.reduce_sum(filtered_error) / tf.reduce_sum(valid_map)
+            EPE = tf.reduce_sum(filtered_error) / tf.reduce_sum(valid_map)
             EPE_prev = tf.reduce_sum(filtered_error_prev) / tf.reduce_sum(valid_map)
-            # EPE_inserted = tf.reduce_sum(filtered_error_inserted) / tf.reduce_sum(valid_map)
-            # EPE_inserteds = [tf.reduce_sum(filtered_error_inserted) / tf.reduce_sum(valid_map) for
-            #                  filtered_error_inserted in filtered_errors]
-
+            EPE_inserted = tf.reduce_sum(filtered_error_inserted) / tf.reduce_sum(valid_map)
+            EPE_inserteds = [tf.reduce_sum(filtered_error_inserted) / tf.reduce_sum(valid_map) for
+                             filtered_error_inserted in filtered_errors]
             # EPE_ori = tf.reduce_sum(filtered_error_ori) / tf.reduce_sum(valid_map_ori)
 
-            # bad_5_perc = tf.where(tf.greater(tf.abs(filtered_error / (gt_val_batch + 1.0 - valid_map)), 0.05),
-            #                       tf.ones_like(abs_err, dtype=tf.float32),
-            #                       tf.zeros_like(abs_err, dtype=tf.float32))
-            # bad_pixel_abs = tf.where(tf.greater(filtered_error, PIXEL_TH),
-            #                          tf.ones_like(filtered_error, dtype=tf.float32),
-            #                          tf.zeros_like(filtered_error, dtype=tf.float32))
-            # bad_pixel_perc = tf.reduce_sum(bad_pixel_abs * bad_5_perc) / tf.reduce_sum(valid_map)
+            bad_5_perc = tf.where(tf.greater(tf.abs(filtered_error / (gt_val_batch + 1.0 - valid_map)), 0.05),
+                                  tf.ones_like(abs_err, dtype=tf.float32),
+                                  tf.zeros_like(abs_err, dtype=tf.float32))
+            bad_pixel_abs = tf.where(tf.greater(filtered_error, PIXEL_TH),
+                                     tf.ones_like(filtered_error, dtype=tf.float32),
+                                     tf.zeros_like(filtered_error, dtype=tf.float32))
+            bad_pixel_perc = tf.reduce_sum(bad_pixel_abs * bad_5_perc) / tf.reduce_sum(valid_map)
             bad_5_perc_prev = tf.where(tf.greater(tf.abs(filtered_error_prev / (gt_val_batch + 1.0 - valid_map)), 0.05),
-                                       tf.ones_like(abs_err_prev, dtype=tf.float32),
-                                       tf.zeros_like(abs_err_prev, dtype=tf.float32))
+                                       tf.ones_like(abs_err, dtype=tf.float32),
+                                       tf.zeros_like(abs_err, dtype=tf.float32))
             bad_pixel_abs_prev = tf.where(tf.greater(filtered_error_prev, PIXEL_TH),
-                                          tf.ones_like(filtered_error_prev, dtype=tf.float32),
-                                          tf.zeros_like(filtered_error_prev, dtype=tf.float32))
+                                          tf.ones_like(filtered_error, dtype=tf.float32),
+                                          tf.zeros_like(filtered_error, dtype=tf.float32))
             bad_pixel_perc_prev = tf.reduce_sum(bad_pixel_abs_prev * bad_5_perc_prev) / tf.reduce_sum(valid_map)
 
-            # bad_5_perc_inserted = tf.where(
-            #     tf.greater(tf.abs(filtered_error_inserted / (gt_val_batch + 1.0 - valid_map)), 0.05),
-            #     tf.ones_like(abs_err, dtype=tf.float32),
-            #     tf.zeros_like(abs_err, dtype=tf.float32))
-            # bad_pixel_abs_inserted = tf.where(tf.greater(filtered_error_inserted, PIXEL_TH),
-            #                                   tf.ones_like(filtered_error, dtype=tf.float32),
-            #                                   tf.zeros_like(filtered_error, dtype=tf.float32))
-            # bad_pixel_perc_inserted = tf.reduce_sum(bad_pixel_abs_inserted * bad_5_perc_inserted) / tf.reduce_sum(
-            #     valid_map)
-            #
-            # bad_5_perc_inserteds = [tf.where(tf.greater(tf.abs(finserted / (gt_val_batch + 1.0 - valid_map)), 0.05),
-            #                                  tf.ones_like(abs_err, dtype=tf.float32),
-            #                                  tf.zeros_like(abs_err, dtype=tf.float32)) for finserted in filtered_errors]
-            # bad_pixel_abs_inserteds = [tf.where(tf.greater(finserted, PIXEL_TH),
-            #                                     tf.ones_like(filtered_error, dtype=tf.float32),
-            #                                     tf.zeros_like(filtered_error, dtype=tf.float32)) for finserted in
-            #                            filtered_errors]
-            # bad_pixel_perc_inserteds = [tf.reduce_sum(bad_pixel_abs_i * bad_5_perc_i) / tf.reduce_sum(valid_map) for
-            #                             bad_pixel_abs_i, bad_5_perc_i in
-            #                             zip(bad_5_perc_inserteds, bad_pixel_abs_inserteds)]
+            bad_5_perc_inserted = tf.where(
+                tf.greater(tf.abs(filtered_error_inserted / (gt_val_batch + 1.0 - valid_map)), 0.05),
+                tf.ones_like(abs_err, dtype=tf.float32),
+                tf.zeros_like(abs_err, dtype=tf.float32))
+            bad_pixel_abs_inserted = tf.where(tf.greater(filtered_error_inserted, PIXEL_TH),
+                                              tf.ones_like(filtered_error, dtype=tf.float32),
+                                              tf.zeros_like(filtered_error, dtype=tf.float32))
+            bad_pixel_perc_inserted = tf.reduce_sum(bad_pixel_abs_inserted * bad_5_perc_inserted) / tf.reduce_sum(
+                valid_map)
+
+            bad_5_perc_inserteds = [tf.where(tf.greater(tf.abs(finserted / (gt_val_batch + 1.0 - valid_map)), 0.05),
+                                             tf.ones_like(abs_err, dtype=tf.float32),
+                                             tf.zeros_like(abs_err, dtype=tf.float32)) for finserted in filtered_errors]
+            bad_pixel_abs_inserteds = [tf.where(tf.greater(finserted, PIXEL_TH),
+                                                tf.ones_like(filtered_error, dtype=tf.float32),
+                                                tf.zeros_like(filtered_error, dtype=tf.float32)) for finserted in
+                                       filtered_errors]
+            bad_pixel_perc_inserteds = [tf.reduce_sum(bad_pixel_abs_i * bad_5_perc_i) / tf.reduce_sum(valid_map) for
+                                        bad_pixel_abs_i, bad_5_perc_i in
+                                        zip(bad_5_perc_inserteds, bad_pixel_abs_inserteds)]
             '''
             bad_5_perc_ori = tf.where(tf.greater(tf.abs(filtered_error_ori/(gt_val_batch+ 1.0 - valid_map)), 0.05),
                                       tf.ones_like(abs_err_ori, dtype=tf.float32),
@@ -184,35 +183,29 @@ def main(args):
             # rmse = np.sqrt(rmse.mean())
             rm_prev = tf.sqrt(tf.reduce_sum(rmse_prev) / tf.reduce_sum(valid_map))
 
-            # r_inserted = tf.abs(val_prediction_inserted - gt_val_batch) ** 2
-            # rmse_inserted = r_inserted * valid_map
-            # # rmse = np.sqrt(rmse.mean())
-            # rm_inserted = tf.sqrt(tf.reduce_sum(rmse_inserted) / tf.reduce_sum(valid_map))
-            #
-            # r = tf.abs(val_prediction - gt_val_batch) ** 2
-            # rmse = r * valid_map
-            # # rmse = np.sqrt(rmse.mean())
-            # rm = tf.sqrt(tf.reduce_sum(rmse) / tf.reduce_sum(valid_map))
+            r_inserted = tf.abs(val_prediction_inserted - gt_val_batch) ** 2
+            rmse_inserted = r_inserted * valid_map
+            # rmse = np.sqrt(rmse.mean())
+            rm_inserted = tf.sqrt(tf.reduce_sum(rmse_inserted) / tf.reduce_sum(valid_map))
 
+            r = tf.abs(val_prediction - gt_val_batch) ** 2
+            rmse = r * valid_map
+            # rmse = np.sqrt(rmse.mean())
+            rm = tf.sqrt(tf.reduce_sum(rmse) / tf.reduce_sum(valid_map))
 
-
-
-            # delta_err = tf.maximum(val_prediction / (gt_val_batch + 1.0 - valid_map),
-            #                        gt_val_batch / (val_prediction + 1.0 - valid_map))
-            # delta_err = valid_map * delta_err
-            # delta1 = tf.where(tf.less(tf.abs(delta_err), 1.25),
-            #                   tf.ones_like(filtered_error, dtype=tf.float32),
-            #                   tf.zeros_like(filtered_error, dtype=tf.float32))
-            # delta1 = valid_map * delta1
-            # delta1 = tf.reduce_sum(delta1) / tf.reduce_sum(valid_map)
-            # delta2 = tf.where(tf.less(tf.abs(delta_err), 1.25 * 1.25),
-            #                   tf.ones_like(filtered_error, dtype=tf.float32),
-            #                   tf.zeros_like(filtered_error, dtype=tf.float32))
-            # delta2 = valid_map * delta2
-            # delta2 = tf.reduce_sum(delta2) / tf.reduce_sum(valid_map)
-
-
-
+            delta_err = tf.maximum(val_prediction / (gt_val_batch + 1.0 - valid_map),
+                                   gt_val_batch / (val_prediction + 1.0 - valid_map))
+            delta_err = valid_map * delta_err
+            delta1 = tf.where(tf.less(tf.abs(delta_err), 1.25),
+                              tf.ones_like(filtered_error, dtype=tf.float32),
+                              tf.zeros_like(filtered_error, dtype=tf.float32))
+            delta1 = valid_map * delta1
+            delta1 = tf.reduce_sum(delta1) / tf.reduce_sum(valid_map)
+            delta2 = tf.where(tf.less(tf.abs(delta_err), 1.25 * 1.25),
+                              tf.ones_like(filtered_error, dtype=tf.float32),
+                              tf.zeros_like(filtered_error, dtype=tf.float32))
+            delta2 = valid_map * delta2
+            delta2 = tf.reduce_sum(delta2) / tf.reduce_sum(valid_map)
 
             def gradient_x(img):
                 # Pad input to keep output size consistent
@@ -228,50 +221,45 @@ def main(args):
                 gy = img[:, :-1, :, :] - img[:, 1:, :, :]  # NHWC
                 return gy
 
-            sum_grad = tf.cast(tf.expand_dims(tf.reduce_mean(gradient_x(left_val_batch) + gradient_y(left_val_batch), 3), 3), tf.float32)
+            sum_grad = tf.expand_dims(tf.reduce_mean(gradient_x(left_val_batch) + gradient_y(left_val_batch), 3), 3)
+            sum_grad = tf.dtypes.cast(sum_grad, tf.float32)
             mean_grad = tf.metrics.mean(sum_grad)[0]
             # print(mean_grad)
             mask_grad = tf.where(tf.greater(sum_grad, mean_grad),
-                                 tf.ones_like(abs_err_prev, dtype=tf.float32),
-                                 tf.zeros_like(abs_err_prev, dtype=tf.float32))
-            bad_pixel_perc_grad = tf.reduce_sum(bad_pixel_abs_prev * bad_5_perc_prev * mask_grad * valid_map) / tf.reduce_sum(
+                                 tf.ones_like(abs_err, dtype=tf.float32),
+                                 tf.zeros_like(abs_err, dtype=tf.float32))
+            bad_pixel_perc_grad = tf.reduce_sum(bad_pixel_abs * bad_5_perc * mask_grad * valid_map) / tf.reduce_sum(
                 valid_map * mask_grad)
-            EPE_grad = tf.reduce_sum(filtered_error_prev * mask_grad) / tf.reduce_sum(mask_grad)
+            EPE_grad = tf.reduce_sum(filtered_error * mask_grad) / tf.reduce_sum(mask_grad)
 
-            # tf.summary.scalar('abs_err', EPE)
+            tf.summary.scalar('abs_err', EPE)
             tf.summary.scalar('abs_err_prev', EPE_prev)
-            # tf.summary.scalar('abs_err_inserted', EPE_inserted)
+            tf.summary.scalar('abs_err_inserted', EPE_inserted)
             tf.summary.scalar('abs_err_grad', EPE_grad)
-            # for i in range(len(EPE_inserteds)):
-            #     tf.summary.scalar('EPE_err_inserted' + str(i), EPE_inserteds[i])
-            # tf.summary.scalar('rmse', rm)
+            for i in range(len(EPE_inserteds)):
+                tf.summary.scalar('EPE_err_inserted' + str(i), EPE_inserteds[i])
+            tf.summary.scalar('rmse', rm)
             tf.summary.scalar('rmse_prev', rm_prev)
-            # tf.summary.scalar('rmse_inserted', rm_inserted)
-            # tf.summary.scalar('bad3', bad_pixel_perc)
+            tf.summary.scalar('rmse_inserted', rm_inserted)
+            tf.summary.scalar('bad3', bad_pixel_perc)
             tf.summary.scalar('bad3_grad', bad_pixel_perc_grad)
             tf.summary.scalar('bad3_prev', bad_pixel_perc_prev)
-            # tf.summary.scalar('bad3_inserted', bad_pixel_perc_inserted)
-            # for i in range(len(EPE_inserteds)):
-            #     tf.summary.scalar('bad3_inserted' + str(i), bad_pixel_perc_inserteds[i])
-            #
-            # tf.summary.scalar('delta1', delta1)
-            # tf.summary.scalar('delta2', delta2)
+            tf.summary.scalar('bad3_inserted', bad_pixel_perc_inserted)
+            for i in range(len(EPE_inserteds)):
+                tf.summary.scalar('bad3_inserted' + str(i), bad_pixel_perc_inserteds[i])
+
+            tf.summary.scalar('delta1', delta1)
+            tf.summary.scalar('delta2', delta2)
             tf.summary.image('left_img', left_val_batch, max_outputs=1)
-            # tf.summary.image('val_prediction', preprocessing.colorize_img(val_prediction, cmap='jet'), max_outputs=1)
+            tf.summary.image('val_prediction', preprocessing.colorize_img(val_prediction, cmap='jet'), max_outputs=1)
             tf.summary.image('grad_mask', preprocessing.colorize_img(mask_grad, cmap='jet'), max_outputs=1)
-            # tf.summary.image('val_prevprediction2', preprocessing.colorize_img(val_prevprediction2, cmap='jet'),
-            #                  max_outputs=1)
-            # tf.summary.image('val_prevprediction4', preprocessing.colorize_img(val_prevprediction4, cmap='jet'),
-            #                  max_outputs=1)
+
             tf.summary.image('val_prevprediction', preprocessing.colorize_img(val_prevprediction, cmap='jet'),
                              max_outputs=1)
-            # tf.summary.image('val_prediction_inserted', preprocessing.colorize_img(val_prediction_inserted, cmap='jet'),
-            #                  max_outputs=1)
+            tf.summary.image('val_prediction_inserted', preprocessing.colorize_img(val_prediction_inserted, cmap='jet'),
+                             max_outputs=1)
             tf.summary.image('val_gt', preprocessing.colorize_img(gt_val_batch, cmap='jet'), max_outputs=1)
             # tf.summary.image('conf_ret', preprocessing.colorize_img(conf_prediction, cmap='jet'), max_outputs=1)
-
-    # def get_learning_rate(global_step, gamma, power, name=None):
-    #     return args.lr * (1 - global_step / total_step) ** 1 + args.lr * 0.1
 
     with tf.name_scope('training_error'):
         # build train ops
@@ -310,7 +298,7 @@ def main(args):
         # restore disparity inference weights
         restored, step_eval, vars_to_restore = weights_utils.check_for_weights_or_restore_them(args.output, sess,
                                                                                                initial_weights=args.weights,
-                                                                                               ignore_list=[])  # ['context-','laser', 'G6','nograd', 'conv00'])
+                                                                                               ignore_list=['score4','refine4','resize32','avg'])  # ['context-','laser', 'G6','nograd', 'conv00'])
         print('Disparity Net Restored?: {} from step {}'.format(restored, step_eval))
         step_eval = 0
         ###vars_to_restore=[]
@@ -376,8 +364,8 @@ if __name__ == '__main__':
     parser.add_argument("--validationSet", help="path to the list file with the validation set",
                         default='s3://bucketjy/nori2_flying_test.list', type=str)  #
     parser.add_argument("-o", "--output", help="path to the output folder where the results will be saved",
-                        default='resdisp_flying_decay/', type=str)
-    parser.add_argument("--weights", help="path to the initial weights for the disparity estimation network (OPTIONAL)", default = 'resdisp_calcSGBM/weights.ckpt-150000')  # ../realtimelaser/reslas/')
+                        default='resdisp_flying_decay_pre/', type=str)
+    parser.add_argument("--weights", help="path to the initial weights for the disparity estimation network (OPTIONAL)", default = '../realtimedisp/resdisp_calcSGBM_decay/weights.ckpt-280000')  # ../realtimelaser/reslas/')
     parser.add_argument("--modelName", help="name of the stereo model to be used", default="dispnet",
                         choices=Nets.STEREO_FACTORY.keys())
     parser.add_argument("--lr", help="initial value for learning rate", default=1e-5, type=float)  # 0.0001
@@ -387,7 +375,7 @@ if __name__ == '__main__':
     parser.add_argument("--numEpochs", help='number of training epochs', type=int, default=200)
     parser.add_argument("--augment", help="flag to enable data augmentation", default=True, action='store_true')
     parser.add_argument("--lossWeights", help="weights for loss at different resolution from full to lower res",
-                        nargs='+', default=[1.0], type=float)
+                        nargs='+', default=[1.0,1.0,1.0], type=float)
     parser.add_argument('--lossType', help="Type of supervised loss to use",
                         choices=loss_factory.SUPERVISED_LOSS.keys(), default="mean_l1", type=str)
     parser.add_argument("--decayStep", help="halve learning rate after this many steps", type=int, default=500000)
