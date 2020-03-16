@@ -1,5 +1,5 @@
-# realtimelinecspn
-双目视差估计与单线激光数据的融合
+# realtimelinecspn, disp+cspn
+双目视差估计与单线激光数据的融合(9月以后的工作）
 
 运行：python3 Train.py
 
